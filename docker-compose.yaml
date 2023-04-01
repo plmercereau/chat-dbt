@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  db:
+    env_file: ../.env.local
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+volumes:
+  db:
+    driver: local
+
