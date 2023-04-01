@@ -1,7 +1,8 @@
 version: '3.8'
 services:
   db:
-    env_file: ../.env.local
+    env_file: .env.local
+    # TODO transform env vars
     image: postgres:15-alpine
     restart: always
     ports:

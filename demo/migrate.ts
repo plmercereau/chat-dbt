@@ -2,7 +2,7 @@ import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 
-import { connectionString } from '../util/connection-string'
+import { connectionString } from '../utils/connection-string'
 
 const db = drizzle(
     postgres(connectionString, {

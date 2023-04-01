@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@commander-js/extra-typings': ^10.0.3
   '@emotion/react': ^11.10.6
   '@emotion/server': ^11.10.0
   '@mantine/core': ^6.0.4
@@ -15,9 +16,11 @@ specifiers:
   '@types/pg': ^8.6.6
   '@types/react': 18.0.28
   '@types/react-dom': 18.0.11
+  commander: ^10.0.0
   dotenv: ^16.0.3
   drizzle-kit: ^0.17.0
   drizzle-orm: ^0.22.0
+  esbuild: ^0.17.14
   eslint: 8.36.0
   eslint-config-next: 13.2.4
   next: 13.2.4
@@ -31,6 +34,9 @@ specifiers:
   typescript: 5.0.2
 
 dependencies:
+  '@commander-js/extra-typings': 10.0.3_commander@10.0.0
+  commander: 10.0.0
+  dotenv: 16.0.3
   next: 13.2.4_biqbaboplfbrettd7655fr4n2y
   open: 9.1.0
   openai: 3.2.1
@@ -51,9 +57,9 @@ devDependencies:
   '@types/pg': 8.6.6
   '@types/react': 18.0.28
   '@types/react-dom': 18.0.11
-  dotenv: 16.0.3
   drizzle-kit: 0.17.1
   drizzle-orm: 0.22.0_wuc4ufssaciullnmbqayjqtmoq
+  esbuild: 0.17.14
   eslint: 8.36.0
   eslint-config-next: 13.2.4_j4766f7ecgqbon3u7zlxn5zszu
   npm-run-all: 4.1.5
@@ -112,6 +118,14 @@ packages:
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
     dev: true
+
+  /@commander-js/extra-typings/10.0.3_commander@10.0.0:
+    resolution: {integrity: sha512-OIw28QV/GlP8k0B5CJTRsl8IyNvd0R8C8rfo54Yz9P388vCNDgdNrFlKxZTGqps+5j6lSw3Ss9JTQwcur1w1oA==}
+    peerDependencies:
+      commander: 10.0.x
+    dependencies:
+      commander: 10.0.0
+    dev: false
 
   /@emotion/babel-plugin/11.10.6:
     resolution: {integrity: sha512-p2dAqtVrkhSa7xz1u/m9eHYdLi+en8NowrmXeF/dKtJpU8lCWli8RUAati7NcSl0afsBott48pdnANuD0wh9QQ==}
@@ -1567,6 +1581,11 @@ packages:
       delayed-stream: 1.0.0
     dev: false
 
+  /commander/10.0.0:
+    resolution: {integrity: sha512-zS5PnTI22FIRM6ylNW8G4Ap0IEOyk62fhLSD0+uHRT9McRCLGpkVNvao4bjimpK/GShynyQkFFxHhwMcETmduA==}
+    engines: {node: '>=14'}
+    dev: false
+
   /commander/7.2.0:
     resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
     engines: {node: '>= 10'}
@@ -1816,7 +1835,7 @@ packages:
   /dotenv/16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
-    dev: true
+    dev: false
 
   /dreamopt/0.8.0:
     resolution: {integrity: sha512-vyJTp8+mC+G+5dfgsY+r3ckxlz+QMX40VjPQsZc5gxVAxLmi64TBoVkP54A/pRAXMXsbu2GMMBrZPxNv23waMg==}

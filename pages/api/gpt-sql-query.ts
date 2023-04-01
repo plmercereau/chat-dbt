@@ -1,12 +1,12 @@
-import { getIntrospection } from '@/util/introspection'
-import { getSqlConnection } from '@/util/sql-connection'
+import { getIntrospection } from '@/utils/introspection'
+import { getSqlConnection } from '@/utils/sql-connection'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { PostgresError } from 'postgres'
 import { Configuration, OpenAIApi } from 'openai'
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
-    organization: process.env.OPENAI_ORGANISATION
+    organization: process.env.OPENAI_ORGANIZATION
 })
 const openai = new OpenAIApi(configuration)
 

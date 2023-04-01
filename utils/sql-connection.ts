@@ -1,10 +1,9 @@
 import postgres, { Sql } from 'postgres'
-import { connectionString } from './connection-string'
 
 let sql: Sql
 export const getSqlConnection = () => {
     if (!sql) {
-        sql = postgres(connectionString, {
+        sql = postgres(process.env.DATABASE_URL!, {
             // ssl: 'require',
             max: 1
         })
