@@ -15,8 +15,8 @@ export type Instrospection = Record<
     }
 >
 
-export const getIntrospection = async () => {
-    const sql = getSqlConnection()
+export const getIntrospection = async (database: string) => {
+    const sql = getSqlConnection(database)
     const result = await sql<
         {
             table_name: string

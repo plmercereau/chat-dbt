@@ -17,17 +17,23 @@ envProgram.parse()
 config({ path: envProgram.opts().env })
 
 const {
-    DB_HOST,
-    DB_USER,
-    DB_NAME,
-    DB_PORT = 5432,
-    DB_PASSWORD,
+    POSTGRES_HOST,
+    POSTGRES_USER,
+    POSTGRES_DB,
+    POSTGRES_PORT = 5432,
+    POSTGRES_PASSWORD,
     DB_CONNECTION_STRING
 } = process.env
 
-if (!DB_CONNECTION_STRING && DB_HOST && DB_USER && DB_NAME && DB_PASSWORD) {
+if (
+    !DB_CONNECTION_STRING &&
+    POSTGRES_HOST &&
+    POSTGRES_USER &&
+    POSTGRES_DB &&
+    POSTGRES_PASSWORD
+) {
     // * Set the DB_CONNECTION_STRING if it is not already set
-    process.env.DB_CONNECTION_STRING = `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`
+    process.env.DB_CONNECTION_STRING = `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`
 }
 
 // * Restore the default behaviour for the main program: activate help and make sure no unknown option is allowed

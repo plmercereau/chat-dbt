@@ -3,6 +3,7 @@ import { Option } from '@commander-js/extra-typings'
 import { startWeb } from './web'
 import { envProgram } from './env'
 import { parseInteger } from './utils'
+import { startCLI } from './cli'
 
 const program = envProgram
     .name('chat-dbt')
@@ -16,36 +17,39 @@ const program = envProgram
             .makeOptionMandatory(true)
     )
     .addOption(
-        new Option('-k, --key <key>', 'OpenAI key')
+        new Option('-k, --api-key <key>', 'OpenAI key')
             .env('OPENAI_API_KEY')
             .makeOptionMandatory(true)
     )
     .addOption(
-        new Option('-o, --org <org>', 'OpenAI organization')
+        new Option('-o, --organization <org>', 'OpenAI organization')
             .env('OPENAI_ORGANIZATION')
             .makeOptionMandatory(true)
     )
+export type CommonOptions = ReturnType<typeof program.opts>
 
 program.configureHelp().showGlobalOptions = true
 
-program
+const web = program
     .command('web')
     .option('-p, --port <number>', 'port number', parseInteger, 3000)
     .option('-n, --no-browser', 'do not open the browser', true)
     .action(options => {
-        const { database } = program.opts()
-        const { browser, port } = options
-        startWeb({
-            port,
-            browser,
-            database
-        })
+        startWeb({ ...program.opts(), ...options })
     })
 
-program.action(options => {
-    const { database } = options
-    console.log('prompt', database)
-    // const globalOptions = program.opts()
-    // console.log(globalOptions)
-})
+export type WebOptions = CommonOptions & ReturnType<typeof web.opts>
+
+const cli = program
+    .addOption(
+        new Option('-f, --format <format>', 'format')
+            .choices(['table', 'json'])
+            .default('table')
+    )
+    .action(async options => {
+        await startCLI({ ...program.opts(), ...options })
+    })
+
+export type CLIOptions = CommonOptions & ReturnType<typeof cli.opts>
+
 program.parse()

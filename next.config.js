@@ -3,10 +3,10 @@ const nextConfig = {
     reactStrictMode: true,
     distDir: 'dist/web',
     env: {
-        DATABASE_URL: `postgres://${process.env.DB_USER}:${
-            process.env.DB_PASSWORD
-        }@${process.env.DB_HOST}:${process.env.DB_HOST || 5432}/${
-            process.env.DB_NAME
+        DATABASE_URL: `postgres://${process.env.POSTGRES_USER}:${
+            process.env.POSTGRES_PASSWORD
+        }@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_HOST || 5432}/${
+            process.env.POSTGRES_DB
         }`
     }
 }
