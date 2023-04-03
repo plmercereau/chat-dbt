@@ -14,3 +14,6 @@
 -   implement the options into the web interface
 -   web interface in dark/light mode
 -   arrow up/down to get the previous queries
+-   add CI tests for both the cli and the web interface
+-   changesets + publish
+-   complete this readme
