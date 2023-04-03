@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Configuration, OpenAIApi } from 'openai'
-import { GptSqlResult, executeQuery } from '@/utils/chat-gpt'
+
+import { GptSqlResult, executeQuery } from '@/shared/chat-gpt'
 
 const openai = new OpenAIApi(
     new Configuration({

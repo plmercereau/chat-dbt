@@ -1,6 +1,7 @@
-import { getConnectionStringFromEnv } from '@/utils/connection-string'
 import { Command } from '@commander-js/extra-typings'
 import { config } from 'dotenv'
+
+import { getConnectionStringFromEnv } from './connection-string'
 
 // * Create a basic program to parse the .env argument
 export const envProgram = new Command().option(

@@ -1,8 +1,10 @@
-import { Configuration, OpenAIApi } from 'openai'
-import { CLIOptions } from '.'
-import prompts from 'prompts'
-import { GptSqlResult, executeQuery } from '@/utils/chat-gpt'
 import chalk from 'chalk'
+import { Configuration, OpenAIApi } from 'openai'
+import prompts from 'prompts'
+
+import { GptSqlResult, executeQuery } from '@/shared/chat-gpt'
+
+import { CLIOptions } from './index'
 
 export const startCLI = async (options: CLIOptions) => {
     const { apiKey, organization } = options

@@ -1,8 +1,9 @@
+import { config } from 'dotenv'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { drizzle } from 'drizzle-orm/postgres-js'
-import { config } from 'dotenv'
-import { getSqlConnection } from '@/utils/sql-connection'
-import { getConnectionStringFromEnv } from '@/utils/connection-string'
+
+import { getConnectionStringFromEnv } from '@/cli/connection-string'
+import { getSqlConnection } from '@/shared/sql-connection'
 
 config({ path: '.env.local' })
 const connectionString = getConnectionStringFromEnv()

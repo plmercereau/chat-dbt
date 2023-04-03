@@ -1,7 +1,8 @@
-import { getIntrospection } from '@/utils/introspection'
-import { getSqlConnection } from '@/utils/sql-connection'
 import { ChatCompletionRequestMessage, OpenAIApi } from 'openai'
 import { Row, RowList } from 'postgres'
+
+import { getIntrospection } from './introspection'
+import { getSqlConnection } from './sql-connection'
 
 export type GptSqlResult = {
     query: string
@@ -21,6 +22,7 @@ export const createMessages = async ({
 }): Promise<ChatCompletionRequestMessage[]> => {
     // * Get the SQL introspection
     const schema = JSON.stringify(await getIntrospection(database), null, 0)
+
     const messages: ChatCompletionRequestMessage[] = [
         {
             role: 'system',
@@ -40,16 +42,19 @@ export const createMessages = async ({
             content: `database: ${schema}`
         }
     ]
+
     // * Add all previous queries
     history?.forEach(entry => {
         messages.push({ role: 'user', content: entry.query })
         messages.push({ role: 'assistant', content: entry.sqlQuery! })
     })
+
     // * Add the query
     messages.push({
         role: 'user',
         content: query
     })
+
     return messages
 }
 

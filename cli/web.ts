@@ -1,9 +1,8 @@
 import { createServer } from 'http'
 import next from 'next'
-import { parse } from 'url'
 import open from 'open'
 import { dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { parse, fileURLToPath } from 'url'
 
 import { WebOptions } from './index'
 

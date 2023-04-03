@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import { Option } from '@commander-js/extra-typings'
-import { startWeb } from './web'
+
+import { startCLI } from './cli'
 import { envProgram } from './env'
 import { parseInteger } from './utils'
-import { startCLI } from './cli'
+import { startWeb } from './web'
 
 const program = envProgram
     .name('chat-dbt')

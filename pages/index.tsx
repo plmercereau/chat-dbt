@@ -1,4 +1,3 @@
-import { PropsWithChildren, useEffect, useState } from 'react'
 import {
     createStyles,
     Flex,
@@ -9,11 +8,12 @@ import {
     Title,
     Textarea
 } from '@mantine/core'
-import { Prism } from '@mantine/prism'
 import { useScrollIntoView } from '@mantine/hooks'
+import { Prism } from '@mantine/prism'
 import { IconSend } from '@tabler/icons-react'
+import { PropsWithChildren, useEffect, useState } from 'react'
 
-import { GptSqlResult } from '@/utils/chat-gpt'
+import { GptSqlResult } from '@/shared/chat-gpt'
 
 const fetcher = async (query: string): Promise<GptSqlResult> => {
     const response = await fetch('/api/gpt-sql-query', {
@@ -57,6 +57,7 @@ const Dialog: React.FC<PropsWithChildren<{ className: string }>> = ({
         </Card>
     )
 }
+
 const Page: React.FC = () => {
     const [input, setInput] = useState('')
     const [loading, setLoading] = useState(false)
