@@ -14,14 +14,17 @@ const program = envProgram
         ).default(false)
     )
     .addOption(
-        new Option('-r, --retries <number>', 'number of automatic retries')
+        new Option(
+            '-r, --retries <number>',
+            'number of automatic retries after a failed query'
+        )
             .argParser(parseInteger)
             .default(3)
     )
     .addOption(
         new Option(
             '-d, --database <connection-string>',
-            'database connection string, for instance "postgres://user:password@host:port/database"'
+            'database connection string, for instance "postgres://user:password@localhost:5432/postgres"'
         )
             .env('DB_CONNECTION_STRING')
             .makeOptionMandatory(true)
@@ -42,7 +45,12 @@ program.configureHelp().showGlobalOptions = true
 
 const web = program
     .command('web')
-    .option('-p, --port <number>', 'port number', parseInteger, 3000)
+    .option(
+        '-p, --port <number>',
+        'port number of the web interface',
+        parseInteger,
+        3000
+    )
     .option('-n, --no-browser', 'do not open the browser', true)
     .action(options => {
         startWeb({ ...program.opts(), ...options })
@@ -52,7 +60,7 @@ export type WebOptions = CommonOptions & ReturnType<typeof web.opts>
 
 const cli = program
     .addOption(
-        new Option('-f, --format <format>', 'format')
+        new Option('-f, --format <format>', 'format of the result')
             .choices(['table', 'json'])
             .default('table')
     )
