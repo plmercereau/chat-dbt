@@ -7,20 +7,19 @@ import chalk from 'chalk'
 export const startCLI = async (options: CLIOptions) => {
     const { apiKey, organization } = options
     const openai = new OpenAIApi(new Configuration({ apiKey, organization }))
-    const history: GptSqlResult[] = []
     while (true) {
         const { query } = await prompts(
             {
                 type: 'text',
                 name: 'query',
-                message: 'Describe your query'
+                message: 'Describe your query',
+                validate: value => !!value || 'Query cannot be empty'
             },
             { onCancel: () => process.exit() }
         )
         await executeQueryAndShowResult({
             openai,
             query,
-            history,
             ...options
         })
     }
@@ -28,14 +27,14 @@ export const startCLI = async (options: CLIOptions) => {
 
 const executeQueryAndShowResult = async ({
     query,
-    history,
-    ...rest
+    history = [],
+    ...options
 }: CLIOptions & {
     query: string
     openai: OpenAIApi
-    history: GptSqlResult[]
+    history?: GptSqlResult[]
 }) => {
-    const { openai, database, format } = rest
+    const { openai, database, format, keepContext } = options
     const execution = await executeQuery({
         openai,
         query,
@@ -48,37 +47,47 @@ const executeQueryAndShowResult = async ({
     }
     if (error) {
         console.error(chalk.red(error))
-        const { retry } = await prompts(
-            {
-                type: 'confirm',
-                name: 'retry',
-                message: 'Retry?',
-                initial: true
-            },
-            { onCancel: () => process.exit() }
-        )
+        let retry = false
+        if (options.retries > 0) {
+            retry = true
+            options.retries--
+        } else {
+            const prompt = await prompts(
+                {
+                    type: 'confirm',
+                    name: 'retry',
+                    message: 'Retry?',
+                    initial: true
+                },
+                { onCancel: () => process.exit() }
+            )
+            retry = prompt.retry
+        }
         if (retry) {
-            let newQuery = query
             if (sqlQuery) {
                 history.push(execution)
-                newQuery = `The query failed with the error: ${error}. Try again.`
+                query = `The query failed with the error: ${error}. Try again.`
             }
+            console.log('Retrying with query:', query)
             await executeQueryAndShowResult({
-                query: newQuery,
+                query,
                 history,
-                ...rest
+                ...options
             })
         }
         return
     }
-
-    history.push(execution)
+    if (keepContext) {
+        history.push(execution)
+    } else {
+        history.length = 0
+    }
     switch (format) {
         case 'table':
             if (result?.columns?.length) {
                 console.table(result)
             } else if (!error) {
-                console.log('Success')
+                console.log(chalk.green('✔'), 'Success')
             }
             break
         case 'json':

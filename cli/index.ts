@@ -7,7 +7,17 @@ import { startCLI } from './cli'
 
 const program = envProgram
     .name('chat-dbt')
-
+    .addOption(
+        new Option(
+            '-c, --keep-context',
+            'keep context between queries'
+        ).default(false)
+    )
+    .addOption(
+        new Option('-r, --retries <number>', 'number of automatic retries')
+            .argParser(parseInteger)
+            .default(3)
+    )
     .addOption(
         new Option(
             '-d, --database <connection-string>',
