@@ -1,14 +1,7 @@
-import {
-    EventHandler,
-    PropsWithChildren,
-    SyntheticEvent,
-    useEffect,
-    useState
-} from 'react'
+import { PropsWithChildren, useEffect, useState } from 'react'
 import {
     createStyles,
     Flex,
-    Input,
     Loader,
     Card,
     useMantineTheme,
@@ -20,7 +13,7 @@ import { Prism } from '@mantine/prism'
 import { useScrollIntoView } from '@mantine/hooks'
 import { IconSend } from '@tabler/icons-react'
 
-import { GptSqlResult } from './api/gpt-sql-query'
+import { GptSqlResult } from '@/utils/chat-gpt'
 
 const fetcher = async (query: string): Promise<GptSqlResult> => {
     const response = await fetch('/api/gpt-sql-query', {

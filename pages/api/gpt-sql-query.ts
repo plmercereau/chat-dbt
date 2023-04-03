@@ -16,7 +16,7 @@ export default async function handler(
     // * Get the query
     const { query } = req.body
     if (!query) {
-        return res.status(400).json({ error: 'no request' })
+        return res.status(400).json({ error: 'no request', query })
     }
     const result = await executeQuery({
         openai,

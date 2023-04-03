@@ -4,25 +4,16 @@ import { ChatCompletionRequestMessage, OpenAIApi } from 'openai'
 import { Row, RowList } from 'postgres'
 
 export type GptSqlResult = {
-    query?: string
+    query: string
+    sqlQuery?: string
     result?: RowList<(Row & Iterable<Row>)[]>
     error?: string
 }
 
-const parseValue = (value: any) => {
-    if (typeof value !== 'string') {
-        return value
-    }
-    try {
-        return JSON.parse(value)
-    } catch {
-        return value
-    }
-}
-
 export const createMessages = async ({
     query,
-    database
+    database,
+    history
 }: {
     query: string
     database: string
@@ -47,19 +38,24 @@ export const createMessages = async ({
         {
             role: 'system',
             content: `database: ${schema}`
-        },
-        {
-            role: 'user',
-            content: query
         }
     ]
-
+    // * Add all previous queries
+    history?.forEach(entry => {
+        messages.push({ role: 'user', content: entry.query })
+        messages.push({ role: 'assistant', content: entry.sqlQuery! })
+    })
+    // * Add the query
+    messages.push({
+        role: 'user',
+        content: query
+    })
     return messages
 }
 
 export const executeQuery = async ({
     openai,
-    query: humanQuery,
+    query,
     database,
     history
 }: {
@@ -75,25 +71,25 @@ export const executeQuery = async ({
             model: 'gpt-4',
             messages: await createMessages({
                 database,
-                query: humanQuery,
+                query,
                 history
             }),
             temperature: 0
         })
-        const query = completion.data.choices[0].message?.content
-        if (!query) {
+        const sqlQuery = completion.data.choices[0].message?.content
+        if (!sqlQuery) {
             throw new Error('empty response')
         }
         try {
             const sql = getSqlConnection(database)
             // * 5. Run the SQL query
-            return { query, result: await sql.unsafe(query) }
+            return { query, sqlQuery, result: await sql.unsafe(sqlQuery) }
         } catch (e) {
             const error = e as Error
-            return { query, error: error.message }
+            return { query, sqlQuery, error: error.message }
         }
     } catch (e) {
         const error = e as Error
-        return { error: error.message }
+        return { query, error: error.message }
     }
 }
