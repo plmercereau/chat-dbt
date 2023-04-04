@@ -2,16 +2,16 @@
 
 ## MVP
 
--   [ ] Editable SQL query before confirmation (and keep the modifications in the history)
--   [ ] Editable SQL query after an error (and keep the modifications in the history)
--   [ ] Change the terminology "retry" to "request correction" (or something like that)
 -   [ ] Implement the options into the web interface
     -   [ ] confirm
-    -   [ ] retries
+    -   [ ] corrections (both automatic and with a user prompt)
     -   [ ] keep-context
+-   [ ] Use `inquirer` instead of `prompts` (has an editor prompt, a yes/no/other prompt, and seems easier to tweak to implement history)
 -   [ ] Arrow up/down to get the previous queries
     -   [ ] CLI
     -   [ ] Web UI: https://mantine.dev/core/autocomplete/
+-   [ ] Editable SQL query before confirmation (and keep the modifications in the history)
+-   [ ] Editable SQL query after an error (and keep the modifications in the history)
 -   [ ] Changesets + publish
 -   [ ] Complete this readme
 
@@ -30,6 +30,7 @@
 
 ## Done
 
+-   [x] Change the terminology "retries" to "ask-corrections"
 -   [x] Add a `--confirm` option to prompt the user before executing the query
 -   [x] Add a `--model` option to choose the OpenAI model
 -   [x] Spinner

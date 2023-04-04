@@ -114,16 +114,16 @@ const executeQueryAndShowResult = async ({
         const error = e as Error
         spinner.fail(error.message)
         let retry = false
-        if (options.retries > 0) {
+        if (options.askCorrections > 0) {
             retry = true
-            options.retries--
+            options.askCorrections--
         } else {
             const prompt = await prompts(
                 {
                     type: 'confirm',
                     name: 'retry',
-                    message: 'Retry?',
-                    initial: options.retries === undefined ? true : false
+                    message: 'Ask correction?',
+                    initial: options.askCorrections === undefined ? true : false
                 },
                 { onCancel: () => process.exit() }
             )
@@ -139,11 +139,7 @@ const executeQueryAndShowResult = async ({
                 })
                 query = `The query failed with the error: ${error}. Try again.`
             }
-            console.log(
-                chalk.blue('!'),
-                'Retrying with query:',
-                chalk.bold(query)
-            )
+            console.log(chalk.blue('!'), 'Retrying with:', chalk.bold(query))
             await executeQueryAndShowResult({
                 query,
                 history,

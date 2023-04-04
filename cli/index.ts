@@ -37,8 +37,8 @@ const program = envProgram
     )
     .addOption(
         new Option(
-            '-r, --retries <number>',
-            'number of automatic retries after a failed query'
+            '-a, --ask-corrections <number>',
+            'number of calls to OpenAI for correcting an error in the SQL query'
         )
             .argParser(parseInteger)
             .default(3)
