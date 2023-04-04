@@ -1,24 +1,17 @@
 import {
+    ActionIcon,
     Flex,
     Loader,
-    Card,
-    useMantineTheme,
-    ActionIcon,
-    Textarea
+    Textarea,
+    useMantineTheme
 } from '@mantine/core'
 import { useScrollIntoView } from '@mantine/hooks'
-import { Prism } from '@mantine/prism'
 import { IconSend } from '@tabler/icons-react'
-import { PropsWithChildren, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { getOptions } from './_options'
-import { ApiCallResponse } from './api/gpt-sql-query'
+import { LeftDialog, QueryDialog, ResponseDialog } from '@/components/Dialogs'
 import { useStyles } from '@/components/styles'
-import { Error } from '@/components/Error'
-import { SqlQuery } from '@/components/SqlQuery'
-import { Result } from '@/components/Result'
-
-const options = getOptions()
+import { ApiCallResponse } from './api/gpt-sql-query'
 
 const fetcher = async (query: string): Promise<ApiCallResponse> => {
     const response = await fetch('/api/gpt-sql-query', {
@@ -27,17 +20,6 @@ const fetcher = async (query: string): Promise<ApiCallResponse> => {
         headers: { 'Content-Type': 'application/json' }
     })
     return response.json()
-}
-
-const Dialog: React.FC<PropsWithChildren<{ className: string }>> = ({
-    children,
-    className
-}) => {
-    return (
-        <Card shadow='sm' padding='xs' withBorder className={className}>
-            {children}
-        </Card>
-    )
 }
 
 const Page: React.FC = () => {
@@ -76,32 +58,15 @@ const Page: React.FC = () => {
         <Flex className={classes.flex} direction='column'>
             {messages.map((message, index) =>
                 'input' in message ? (
-                    <Dialog key={index} className={classes.right}>
-                        <Prism
-                            classNames={{
-                                code: classes.code
-                            }}
-                            language='markdown'
-                        >
-                            {message.input}
-                        </Prism>
-                    </Dialog>
+                    <QueryDialog key={index} input={message.input} />
                 ) : (
-                    <Dialog key={index} className={classes.left}>
-                        <SqlQuery query={message.sqlQuery} />
-                        <Error error={message.error} />
-                        <Result
-                            result={message.result}
-                            format={options.format}
-                        />
-                    </Dialog>
+                    <ResponseDialog key={index} message={message} />
                 )
             )}
-
             {loading && (
-                <Dialog className={classes.left}>
+                <LeftDialog>
                     <Loader />
-                </Dialog>
+                </LeftDialog>
             )}
             <Textarea
                 disabled={loading}
