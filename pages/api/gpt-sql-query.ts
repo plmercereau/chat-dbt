@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { Configuration, OpenAIApi } from 'openai'
 
 import { GptSqlResponse, runQuery } from '@/shared/chat-gpt'
-import { getOptions, getSecrets } from '../_options'
+import { getOptions, getSecrets } from '@/utils/options'
 
 const { apiKey, organization, database } = getSecrets()
 const { model } = getOptions()
@@ -13,15 +13,19 @@ export default async function handler(
     res: NextApiResponse<GptSqlResponse>
 ) {
     // * Get the query
-    const { query } = req.body
+    const { query, context } = req.body as {
+        query?: string
+        context?: GptSqlResponse[]
+    }
     if (!query) {
-        return res.status(400).json({ error: 'no request', query })
+        return res.status(400).json({ error: 'no request', query: '' })
     }
     const response = await runQuery({
         openai,
         model,
         query,
-        database
+        database,
+        context
     })
 
     return res.status(response.error ? 500 : 200).json(response)

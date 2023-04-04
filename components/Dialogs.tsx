@@ -5,7 +5,7 @@ import { PropsWithChildren } from 'react'
 import { Error } from '@/components/Error'
 import { Result } from '@/components/Result'
 import { SqlQuery } from '@/components/SqlQuery'
-import { useStyles } from '@/components/styles'
+import { useStyles } from '@/utils/styles'
 import { GptSqlResponse } from '@/shared/chat-gpt'
 
 export const Dialog: React.FC<PropsWithChildren<{ className: string }>> = ({
@@ -29,7 +29,9 @@ export const RightDialog: React.FC<PropsWithChildren> = ({ children }) => {
     return <Dialog className={classes.right}>{children}</Dialog>
 }
 
-export const QueryDialog: React.FC<{ input: string }> = ({ input }) => {
+export const QueryDialog: React.FC<{ message: GptSqlResponse }> = ({
+    message
+}) => {
     const {
         classes: { code }
     } = useStyles()
@@ -37,18 +39,24 @@ export const QueryDialog: React.FC<{ input: string }> = ({ input }) => {
     return (
         <RightDialog>
             <Prism classNames={{ code }} language='markdown'>
-                {input}
+                {message.query}
             </Prism>
         </RightDialog>
     )
 }
 
-export const ResponseDialog: React.FC<{ message: GptSqlResponse }> = ({
-    message
-}) => (
-    <LeftDialog>
-        <SqlQuery query={message.sqlQuery} />
-        <Error error={message.error} />
-        <Result result={message.result} />
-    </LeftDialog>
-)
+export const ResponseDialog: React.FC<{
+    message: GptSqlResponse
+    last: boolean
+}> = ({ message, last }) => {
+    if (!message.error && !message.sqlQuery) {
+        return null
+    }
+    return (
+        <LeftDialog>
+            <SqlQuery query={message.sqlQuery} />
+            <Error error={message.error} active={last} />
+            <Result result={message.result} />
+        </LeftDialog>
+    )
+}

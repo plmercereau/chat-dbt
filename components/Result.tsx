@@ -9,8 +9,8 @@ import {
 import { Prism } from '@mantine/prism'
 import { PropsWithChildren, useState } from 'react'
 
-import { useStyles } from './styles'
-import { getOptions } from '@/pages/_options'
+import { useStyles } from '@/utils/styles'
+import { getOptions } from '@/utils/options'
 import { GptSqlResultItem } from '@/shared/chat-gpt'
 
 const options = getOptions()

@@ -1,7 +1,7 @@
 import { Title } from '@mantine/core'
 import { Prism } from '@mantine/prism'
 
-import { useStyles } from './styles'
+import { useStyles } from '@/utils/styles'
 
 export const SqlQuery: React.FC<{
     query?: string

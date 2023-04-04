@@ -7,28 +7,17 @@ import {
 } from '@mantine/core'
 import { useScrollIntoView } from '@mantine/hooks'
 import { IconSend } from '@tabler/icons-react'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 import { LeftDialog, QueryDialog, ResponseDialog } from '@/components/Dialogs'
-import { useStyles } from '@/components/styles'
-import { GptSqlResponse } from '@/shared/chat-gpt'
-
-const fetcher = async (query: string): Promise<GptSqlResponse> => {
-    const response = await fetch('/api/gpt-sql-query', {
-        body: JSON.stringify({ query }),
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-    })
-    return response.json()
-}
+import { useStyles } from '@/utils/styles'
+import { useAppContext } from '@/utils/state'
+import { fetcher } from '@/utils/fetch'
+import React from 'react'
 
 const Page: React.FC = () => {
-    const [input, setInput] = useState('')
-    const [loading, setLoading] = useState(false)
-    const [messages, setMessages] = useState<
-        Array<{ input: string } | GptSqlResponse>
-    >([])
-
+    const { loading, setLoading, history, setHistory } = useAppContext()
+    const [query, setQuery] = useState('')
     const { scrollIntoView, targetRef } = useScrollIntoView<HTMLInputElement>()
 
     const { classes } = useStyles()
@@ -38,31 +27,34 @@ const Page: React.FC = () => {
 
     const submit = async () => {
         setLoading(true)
-        setMessages([...messages, { input }])
-        const q = input
-        setInput('')
-        scrollIntoView()
+        const currentHistory = [...history]
+        setHistory([...currentHistory, { query }])
 
-        const result = await fetcher(q)
+        const result = await fetcher({ query })
         setLoading(false)
-        setMessages([...messages, { input }, result])
-
-        scrollIntoView()
-        if (result.error) setInput(q)
-        targetRef.current.focus()
+        setHistory([...currentHistory, result])
+        setQuery('')
     }
 
-    useEffect(() => targetRef.current.focus())
+    useEffect(() => {
+        if (!loading) {
+            scrollIntoView()
+            targetRef.current.focus()
+        }
+    }, [targetRef, loading, scrollIntoView])
 
     return (
         <Flex className={classes.flex} direction='column'>
-            {messages.map((message, index) =>
-                'input' in message ? (
-                    <QueryDialog key={index} input={message.input} />
-                ) : (
-                    <ResponseDialog key={index} message={message} />
-                )
-            )}
+            {history.map((message, index) => (
+                <Fragment key={index}>
+                    <QueryDialog message={message} />
+                    <ResponseDialog
+                        key={'a-' + index}
+                        message={message}
+                        last={index === history.length - 1}
+                    />
+                </Fragment>
+            ))}
             {loading && (
                 <LeftDialog>
                     <Loader />
@@ -70,8 +62,8 @@ const Page: React.FC = () => {
             )}
             <Textarea
                 disabled={loading}
-                value={input}
-                onChange={e => setInput(e.target.value)}
+                value={query}
+                onChange={e => setQuery(e.target.value)}
                 onKeyDown={e => {
                     if (e.key === 'Enter') {
                         e.preventDefault()

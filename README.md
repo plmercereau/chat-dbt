@@ -4,7 +4,7 @@
 
 -   [ ] Implement the options into the web interface
     -   [ ] confirm
-    -   [ ] corrections (both automatic and with a user prompt)
+    -   [ ] automatic corrections
     -   [ ] keep-context
 -   [ ] Use `inquirer` instead of `prompts` (has an editor prompt, a yes/no/other prompt, and seems easier to tweak to implement history)
 -   [ ] Arrow up/down to get the previous queries
@@ -34,3 +34,4 @@
 -   [x] Add a `--confirm` option to prompt the user before executing the query
 -   [x] Add a `--model` option to choose the OpenAI model
 -   [x] Spinner
+-   [x] Manual requests for corrections

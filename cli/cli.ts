@@ -7,6 +7,7 @@ import { GptSqlResponse, getSqlQuery, runSqlQuery } from '@/shared/chat-gpt'
 import { getIntrospection } from '@/shared/introspection'
 
 import { CommonOptions } from './index'
+import { getErrorPrompt } from '@/shared/error'
 
 export const startCLI = async (options: CommonOptions) => {
     const { apiKey, organization } = options
@@ -31,13 +32,13 @@ export const startCLI = async (options: CommonOptions) => {
 
 const executeQueryAndShowResult = async ({
     query,
-    history = [],
+    context = [],
     ...options
 }: CommonOptions & {
     /** @example Number of users who have a first name starting with 'A' */
     query: string
     openai: OpenAIApi
-    history?: GptSqlResponse[]
+    context?: GptSqlResponse[]
 }) => {
     const { openai, database, format, keepContext, model } = options
     const spinner = ora()
@@ -49,7 +50,7 @@ const executeQueryAndShowResult = async ({
         spinner.text = 'Calling OpenAI...'
         sqlQuery = await getSqlQuery({
             query,
-            history,
+            context,
             openai,
             model,
             introspection
@@ -78,9 +79,9 @@ const executeQueryAndShowResult = async ({
         }
 
         if (keepContext) {
-            history.push({ query, sqlQuery, result })
+            context.push({ query, sqlQuery, result })
         } else {
-            history.length = 0
+            context.length = 0
         }
         switch (format) {
             case 'table':
@@ -131,18 +132,18 @@ const executeQueryAndShowResult = async ({
         }
         if (retry) {
             if (sqlQuery !== '') {
-                history.push({
+                context.push({
                     query,
                     sqlQuery,
                     result: undefined,
                     error: error.message
                 })
-                query = `The query failed with the error: ${error}. Try again.`
+                query = getErrorPrompt(error.message)
             }
             console.log(chalk.blue('!'), 'Retrying with:', chalk.bold(query))
             await executeQueryAndShowResult({
                 query,
-                history,
+                context,
                 ...options
             })
         }

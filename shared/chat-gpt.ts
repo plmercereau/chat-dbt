@@ -17,7 +17,7 @@ export type GptSqlResponse = {
     error?: string
 }
 
-export type MessageOptions = { query: string; history?: GptSqlResponse[] } & (
+export type MessageOptions = { query: string; context?: GptSqlResponse[] } & (
     | {
           database: string
       }
@@ -28,7 +28,7 @@ export type MessageOptions = { query: string; history?: GptSqlResponse[] } & (
 
 export const createMessages = async ({
     query,
-    history,
+    context,
     ...variant
 }: MessageOptions): Promise<ChatCompletionRequestMessage[]> => {
     // * Get the SQL introspection
@@ -62,7 +62,7 @@ export const createMessages = async ({
     ]
 
     // * Add all previous queries
-    history?.forEach(entry => {
+    context?.forEach(entry => {
         messages.push({ role: 'user', content: entry.query })
         messages.push({ role: 'assistant', content: entry.sqlQuery! })
     })
@@ -126,7 +126,7 @@ export const runQuery = async (options: {
     /** @example Number of users who have a first name starting with 'A' */
     query: string
     database: string
-    history?: GptSqlResponse[]
+    context?: GptSqlResponse[]
 }): Promise<GptSqlResponse> => {
     const { query, database } = options
     try {
