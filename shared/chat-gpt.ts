@@ -1,7 +1,7 @@
 import { ChatCompletionRequestMessage, OpenAIApi } from 'openai'
 import { Row, RowList } from 'postgres'
 
-import { getIntrospection } from './introspection'
+import { Instrospection, getIntrospection } from './introspection'
 import { getSqlConnection } from './sql-connection'
 
 export type GptSqlResult = {
@@ -11,17 +11,29 @@ export type GptSqlResult = {
     error?: string
 }
 
+export type MessageOptions = { query: string; history?: GptSqlResult[] } & (
+    | {
+          database: string
+      }
+    | {
+          introspection: Instrospection
+      }
+)
+
 export const createMessages = async ({
     query,
-    database,
-    history
-}: {
-    query: string
-    database: string
-    history?: GptSqlResult[]
-}): Promise<ChatCompletionRequestMessage[]> => {
+    history,
+    ...variant
+}: MessageOptions): Promise<ChatCompletionRequestMessage[]> => {
     // * Get the SQL introspection
-    const schema = JSON.stringify(await getIntrospection(database), null, 0)
+    const schema = JSON.stringify(
+        'introspection' in variant
+            ? variant.introspection
+            : await getIntrospection(variant.database),
+
+        null,
+        0
+    )
 
     const messages: ChatCompletionRequestMessage[] = [
         {
@@ -58,37 +70,49 @@ export const createMessages = async ({
     return messages
 }
 
-export const executeQuery = async ({
+export const getSqlQuery = async ({
     openai,
-    query,
-    database,
-    history
-}: {
+    ...options
+}: MessageOptions & {
+    openai: OpenAIApi
+}): Promise<string> => {
+    // * Query OpenAI
+    const completion = await openai.createChatCompletion({
+        model: 'gpt-4',
+        messages: await createMessages(options),
+        temperature: 0
+    })
+    const sqlQuery = completion.data.choices[0].message?.content
+    if (!sqlQuery) {
+        throw new Error('empty response')
+    }
+    return sqlQuery
+}
+
+export const runSqlQuery = async (options: {
+    sqlQuery: string
+    database: string
+}): Promise<RowList<(Row & Iterable<Row>)[]>> => {
+    const { sqlQuery, database } = options
+    return getSqlConnection(database).unsafe(sqlQuery)
+}
+
+export const runQuery = async (options: {
     openai: OpenAIApi
     /** @example Number of users who have a first name starting with 'A' */
     query: string
     database: string
     history?: GptSqlResult[]
 }): Promise<GptSqlResult> => {
+    const { query, database } = options
     try {
-        // * Query OpenAI
-        const completion = await openai.createChatCompletion({
-            model: 'gpt-4',
-            messages: await createMessages({
-                database,
-                query,
-                history
-            }),
-            temperature: 0
-        })
-        const sqlQuery = completion.data.choices[0].message?.content
-        if (!sqlQuery) {
-            throw new Error('empty response')
-        }
+        const sqlQuery = await getSqlQuery(options)
         try {
-            const sql = getSqlConnection(database)
-            // * 5. Run the SQL query
-            return { query, sqlQuery, result: await sql.unsafe(sqlQuery) }
+            return {
+                query,
+                sqlQuery,
+                result: await runSqlQuery({ sqlQuery, database })
+            }
         } catch (e) {
             const error = e as Error
             return { query, sqlQuery, error: error.message }

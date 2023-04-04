@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Configuration, OpenAIApi } from 'openai'
 
-import { GptSqlResult, executeQuery } from '@/shared/chat-gpt'
+import { GptSqlResult, runQuery } from '@/shared/chat-gpt'
 
 const openai = new OpenAIApi(
     new Configuration({
@@ -19,7 +19,7 @@ export default async function handler(
     if (!query) {
         return res.status(400).json({ error: 'no request', query })
     }
-    const result = await executeQuery({
+    const result = await runQuery({
         openai,
         query,
         database: process.env.DATABASE_URL!

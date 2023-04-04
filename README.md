@@ -19,3 +19,4 @@
 -   complete this readme
 -   comment the code
 -   add a `--model` option to let the user choose the OpenAI model
+-   [x] spinner
