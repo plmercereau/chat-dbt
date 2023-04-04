@@ -1,9 +1,10 @@
+import { Button, Container, Group, Title } from '@mantine/core'
+import { IconRefresh } from '@tabler/icons-react'
+import { Fragment, MouseEventHandler } from 'react'
+
 import { getErrorPrompt } from '@/shared/error'
 import { fetcher } from '@/utils/fetch'
 import { useAppContext } from '@/utils/state'
-import { Button, Container, Group, Title } from '@mantine/core'
-import { IconRefresh } from '@tabler/icons-react'
-import { MouseEventHandler } from 'react'
 
 export const Error: React.FC<{
     error?: string
@@ -29,12 +30,12 @@ export const Error: React.FC<{
             // * Get all the queries after the last successful query
             context: currentHistory.slice(-contextSize)
         })
-        setLoading(false)
+        setLoading(false) // TODO this does not re-focus the input
         setHistory([...currentHistory, result])
     }
 
     return (
-        <>
+        <Fragment>
             <Title order={4}>Error</Title>
             <Container>{error}</Container>
             {active && !loading && (
@@ -48,6 +49,6 @@ export const Error: React.FC<{
                     </Button>
                 </Group>
             )}
-        </>
+        </Fragment>
     )
 }

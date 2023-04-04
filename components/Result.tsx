@@ -7,7 +7,7 @@ import {
     TableProps
 } from '@mantine/core'
 import { Prism } from '@mantine/prism'
-import { PropsWithChildren, useState } from 'react'
+import { Fragment, PropsWithChildren, useState } from 'react'
 
 import { useStyles } from '@/utils/styles'
 import { getOptions } from '@/utils/options'
@@ -145,7 +145,7 @@ export const Result: React.FC<{
 }> = ({ result }) => {
     if (!result?.length) return null
     return (
-        <>
+        <Fragment>
             {result.map((item, tableKey) => (
                 <ItemResult
                     key={tableKey}
@@ -154,6 +154,6 @@ export const Result: React.FC<{
                     item={item}
                 />
             ))}
-        </>
+        </Fragment>
     )
 }
