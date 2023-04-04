@@ -6,9 +6,9 @@ import prompts from 'prompts'
 import { GptSqlResult, getSqlQuery, runSqlQuery } from '@/shared/chat-gpt'
 import { getIntrospection } from '@/shared/introspection'
 
-import { CLIOptions } from './index'
+import { CommonOptions } from './index'
 
-export const startCLI = async (options: CLIOptions) => {
+export const startCLI = async (options: CommonOptions) => {
     const { apiKey, organization } = options
     const openai = new OpenAIApi(new Configuration({ apiKey, organization }))
     while (true) {
@@ -33,7 +33,7 @@ const executeQueryAndShowResult = async ({
     query,
     history = [],
     ...options
-}: CLIOptions & {
+}: CommonOptions & {
     /** @example Number of users who have a first name starting with 'A' */
     query: string
     openai: OpenAIApi
@@ -48,10 +48,28 @@ const executeQueryAndShowResult = async ({
         const introspection = await getIntrospection(database)
         spinner.text = 'Calling OpenAI...'
         sqlQuery = await getSqlQuery({ query, history, openai, introspection })
+        if (options.confirm) {
+            // * Ask the user's confirmation before executing the SQL query
+            spinner.stop()
+            console.log(chalk.greenBright(sqlQuery))
+            const { confirm } = await prompts({
+                type: 'confirm',
+                name: 'confirm',
+                message: 'Execute the query?',
+                initial: true
+            })
+            if (!confirm) {
+                return
+            }
+            spinner.start()
+        }
         spinner.text = 'Running query...'
         const result = await runSqlQuery({ sqlQuery, database })
         spinner.succeed('Success')
-        console.log(chalk.dim(sqlQuery))
+        if (!options.confirm) {
+            // * Print the SQL query, but only if it's not already printed
+            console.log(chalk.dim(sqlQuery))
+        }
 
         if (keepContext) {
             history.push({ query, sqlQuery, result })
@@ -115,7 +133,5 @@ const executeQueryAndShowResult = async ({
             })
         }
         return
-    } finally {
-        // spinner.stop()
     }
 }

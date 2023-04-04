@@ -10,8 +10,26 @@ const program = envProgram
     .name('chat-dbt')
     .addOption(
         new Option(
-            '-c, --keep-context',
-            'keep context between queries'
+            '-d, --database <connection-string>',
+            'database connection string, for instance "postgres://user:password@localhost:5432/postgres"'
+        )
+            .env('DB_CONNECTION_STRING')
+            .makeOptionMandatory(true)
+    )
+    .addOption(
+        new Option('--api-key <key>, --key <key>', 'OpenAI key')
+            .env('OPENAI_API_KEY')
+            .makeOptionMandatory(true)
+    )
+    .addOption(
+        new Option('--organization <org>, --org <org>', 'OpenAI organization')
+            .env('OPENAI_ORGANIZATION')
+            .makeOptionMandatory(true)
+    )
+    .addOption(
+        new Option(
+            '-c, --confirm',
+            'ask confirmation before running the SQL query'
         ).default(false)
     )
     .addOption(
@@ -24,22 +42,16 @@ const program = envProgram
     )
     .addOption(
         new Option(
-            '-d, --database <connection-string>',
-            'database connection string, for instance "postgres://user:password@localhost:5432/postgres"'
-        )
-            .env('DB_CONNECTION_STRING')
-            .makeOptionMandatory(true)
+            '-k, --keep-context',
+            'keep context between queries'
+        ).default(false)
     )
     .addOption(
-        new Option('-k, --api-key <key>', 'OpenAI key')
-            .env('OPENAI_API_KEY')
-            .makeOptionMandatory(true)
+        new Option('-f, --format <format>', 'format of the result')
+            .choices(['table', 'json'])
+            .default('table')
     )
-    .addOption(
-        new Option('-o, --organization <org>', 'OpenAI organization')
-            .env('OPENAI_ORGANIZATION')
-            .makeOptionMandatory(true)
-    )
+
 export type CommonOptions = ReturnType<typeof program.opts>
 
 program.configureHelp().showGlobalOptions = true
@@ -59,16 +71,8 @@ const web = program
 
 export type WebOptions = CommonOptions & ReturnType<typeof web.opts>
 
-const cli = program
-    .addOption(
-        new Option('-f, --format <format>', 'format of the result')
-            .choices(['table', 'json'])
-            .default('table')
-    )
-    .action(async options => {
-        await startCLI({ ...program.opts(), ...options })
-    })
-
-export type CLIOptions = CommonOptions & ReturnType<typeof cli.opts>
+program.action(async options => {
+    await startCLI({ ...program.opts(), ...options })
+})
 
 program.parse()
