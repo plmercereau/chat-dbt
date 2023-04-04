@@ -6,22 +6,14 @@ import { parse, fileURLToPath } from 'url'
 
 import { WebOptions } from './index'
 
-export const startWeb = async ({
-    port,
-    browser,
-    database,
-    apiKey,
-    organization
-}: WebOptions) => {
+export const startWeb = async ({ port, browser, ...rest }: WebOptions) => {
+    const { apiKey, organization, database, ...options } = rest
     const app = next({
         dev: false,
         conf: {
             distDir: 'web',
-            env: {
-                DATABASE_URL: database,
-                OPENAI_API_KEY: apiKey,
-                OPENAI_ORGANIZATION: organization
-            }
+            serverRuntimeConfig: { apiKey, organization, database },
+            publicRuntimeConfig: options
         },
         dir: dirname(fileURLToPath(import.meta.url))
     })

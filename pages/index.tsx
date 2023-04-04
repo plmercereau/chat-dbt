@@ -1,11 +1,9 @@
 import {
-    createStyles,
     Flex,
     Loader,
     Card,
     useMantineTheme,
     ActionIcon,
-    Title,
     Textarea
 } from '@mantine/core'
 import { useScrollIntoView } from '@mantine/hooks'
@@ -13,9 +11,16 @@ import { Prism } from '@mantine/prism'
 import { IconSend } from '@tabler/icons-react'
 import { PropsWithChildren, useEffect, useState } from 'react'
 
-import { GptSqlResult } from '@/shared/chat-gpt'
+import { getOptions } from './_options'
+import { ApiCallResponse } from './api/gpt-sql-query'
+import { useStyles } from '@/components/styles'
+import { Error } from '@/components/Error'
+import { SqlQuery } from '@/components/SqlQuery'
+import { Result } from '@/components/Result'
 
-const fetcher = async (query: string): Promise<GptSqlResult> => {
+const options = getOptions()
+
+const fetcher = async (query: string): Promise<ApiCallResponse> => {
     const response = await fetch('/api/gpt-sql-query', {
         body: JSON.stringify({ query }),
         method: 'POST',
@@ -23,29 +28,6 @@ const fetcher = async (query: string): Promise<GptSqlResult> => {
     })
     return response.json()
 }
-
-const useStyles = createStyles(theme => {
-    return {
-        code: {
-            paddingRight: '30px',
-            whiteSpace: 'pre-wrap'
-        },
-        left: {
-            alignSelf: 'flex-start',
-            borderRadius: '0px 10px 10px 10px',
-            maxWidth: '100%'
-        },
-        right: {
-            alignSelf: 'flex-end',
-            borderRadius: '10px 0px 10px 10px',
-            maxWidth: '100%'
-        },
-        flex: {
-            padding: theme.spacing.xs,
-            gap: theme.spacing.xs
-        }
-    }
-})
 
 const Dialog: React.FC<PropsWithChildren<{ className: string }>> = ({
     children,
@@ -62,7 +44,7 @@ const Page: React.FC = () => {
     const [input, setInput] = useState('')
     const [loading, setLoading] = useState(false)
     const [messages, setMessages] = useState<
-        Array<{ input: string } | GptSqlResult>
+        Array<{ input: string } | ApiCallResponse>
     >([])
 
     const { scrollIntoView, targetRef } = useScrollIntoView<HTMLInputElement>()
@@ -106,38 +88,12 @@ const Page: React.FC = () => {
                     </Dialog>
                 ) : (
                     <Dialog key={index} className={classes.left}>
-                        {message.query && (
-                            <>
-                                <Title order={4}>Query</Title>
-                                <Prism
-                                    classNames={{
-                                        code: classes.code
-                                    }}
-                                    language='sql'
-                                >
-                                    {message.query}
-                                </Prism>
-                            </>
-                        )}
-                        {message.error && (
-                            <>
-                                <Title order={4}>Error</Title>
-                                {message.error}
-                            </>
-                        )}
-                        {message.result && (
-                            <>
-                                <Title order={4}>Result</Title>
-                                <Prism
-                                    classNames={{
-                                        code: classes.code
-                                    }}
-                                    language='json'
-                                >
-                                    {JSON.stringify(message.result, null, 2)}
-                                </Prism>
-                            </>
-                        )}
+                        <SqlQuery query={message.sqlQuery} />
+                        <Error error={message.error} />
+                        <Result
+                            result={message.result}
+                            format={options.format}
+                        />
                     </Dialog>
                 )
             )}
