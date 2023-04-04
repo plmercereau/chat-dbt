@@ -3,7 +3,7 @@ import { Configuration, OpenAIApi } from 'openai'
 import ora from 'ora'
 import prompts from 'prompts'
 
-import { GptSqlResult, getSqlQuery, runSqlQuery } from '@/shared/chat-gpt'
+import { GptSqlResponse, getSqlQuery, runSqlQuery } from '@/shared/chat-gpt'
 import { getIntrospection } from '@/shared/introspection'
 
 import { CommonOptions } from './index'
@@ -37,7 +37,7 @@ const executeQueryAndShowResult = async ({
     /** @example Number of users who have a first name starting with 'A' */
     query: string
     openai: OpenAIApi
-    history?: GptSqlResult[]
+    history?: GptSqlResponse[]
 }) => {
     const { openai, database, format, keepContext, model } = options
     const spinner = ora()
@@ -84,18 +84,27 @@ const executeQueryAndShowResult = async ({
         }
         switch (format) {
             case 'table':
-                if (result.length) {
-                    if (result.columns) {
-                        // * Single table
-                        console.table(result)
+                result.forEach(item => {
+                    console.log(item)
+                    if (item?.columns) {
+                        // * Data is expected e.g. SELECT statement
+                        console.table(item.rows)
                     } else {
-                        // * Multiple tables e.g. more thant one SELECT statement
-                        result.forEach(table => console.table(table))
+                        // * No data is expected e.g. INSERT statement with no RETURNING clause
+                        console.table([{ count: item.count }])
                     }
-                }
+                })
                 break
             case 'json':
-                console.log(JSON.stringify(result))
+                console.log(
+                    JSON.stringify(
+                        result.map(item =>
+                            item.columns ? item.rows : { count: item.count }
+                        ),
+                        null,
+                        2
+                    )
+                )
                 break
         }
     } catch (e) {

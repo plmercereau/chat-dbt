@@ -11,9 +11,9 @@ import { useEffect, useState } from 'react'
 
 import { LeftDialog, QueryDialog, ResponseDialog } from '@/components/Dialogs'
 import { useStyles } from '@/components/styles'
-import { ApiCallResponse } from './api/gpt-sql-query'
+import { GptSqlResponse } from '@/shared/chat-gpt'
 
-const fetcher = async (query: string): Promise<ApiCallResponse> => {
+const fetcher = async (query: string): Promise<GptSqlResponse> => {
     const response = await fetch('/api/gpt-sql-query', {
         body: JSON.stringify({ query }),
         method: 'POST',
@@ -26,7 +26,7 @@ const Page: React.FC = () => {
     const [input, setInput] = useState('')
     const [loading, setLoading] = useState(false)
     const [messages, setMessages] = useState<
-        Array<{ input: string } | ApiCallResponse>
+        Array<{ input: string } | GptSqlResponse>
     >([])
 
     const { scrollIntoView, targetRef } = useScrollIntoView<HTMLInputElement>()

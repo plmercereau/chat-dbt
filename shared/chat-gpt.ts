@@ -1,17 +1,23 @@
 import { ChatCompletionRequestMessage, OpenAIApi } from 'openai'
-import { Row, RowList } from 'postgres'
+import { ColumnList, Row, RowList } from 'postgres'
 
 import { Instrospection, getIntrospection } from './introspection'
 import { getSqlConnection } from './sql-connection'
 
-export type GptSqlResult = {
+export type GptSqlResultItem = {
+    rows: RowList<(Row & Iterable<Row>)[]>
+    columns?: ColumnList<any>
+    count: number
+}
+
+export type GptSqlResponse = {
     query: string
     sqlQuery?: string
-    result?: RowList<(Row & Iterable<Row>)[]>
+    result?: GptSqlResultItem[]
     error?: string
 }
 
-export type MessageOptions = { query: string; history?: GptSqlResult[] } & (
+export type MessageOptions = { query: string; history?: GptSqlResponse[] } & (
     | {
           database: string
       }
@@ -94,9 +100,24 @@ export const getSqlQuery = async ({
 export const runSqlQuery = async (options: {
     sqlQuery: string
     database: string
-}): Promise<RowList<(Row & Iterable<Row>)[]>> => {
+}): Promise<GptSqlResultItem[]> => {
     const { sqlQuery, database } = options
-    return getSqlConnection(database).unsafe(sqlQuery)
+    const result = await getSqlConnection(database).unsafe(sqlQuery)
+    return result.columns
+        ? // * Single result e.g. SELECT * FROM users
+          [
+              {
+                  rows: result,
+                  columns: result.columns,
+                  count: result.count
+              }
+          ]
+        : // * Multiple results e.g. SELECT * FROM users; SELECT * FROM posts
+          result.map(item => ({
+              columns: item.columns,
+              rows: item as RowList<(Row & Iterable<Row>)[]>,
+              count: item.count
+          }))
 }
 
 export const runQuery = async (options: {
@@ -105,16 +126,17 @@ export const runQuery = async (options: {
     /** @example Number of users who have a first name starting with 'A' */
     query: string
     database: string
-    history?: GptSqlResult[]
-}): Promise<GptSqlResult> => {
+    history?: GptSqlResponse[]
+}): Promise<GptSqlResponse> => {
     const { query, database } = options
     try {
         const sqlQuery = await getSqlQuery(options)
         try {
+            const result = await runSqlQuery({ sqlQuery, database })
             return {
                 query,
                 sqlQuery,
-                result: await runSqlQuery({ sqlQuery, database })
+                result
             }
         } catch (e) {
             const error = e as Error

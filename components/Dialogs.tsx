@@ -6,7 +6,7 @@ import { Error } from '@/components/Error'
 import { Result } from '@/components/Result'
 import { SqlQuery } from '@/components/SqlQuery'
 import { useStyles } from '@/components/styles'
-import { ApiCallResponse } from '@/pages/api/gpt-sql-query'
+import { GptSqlResponse } from '@/shared/chat-gpt'
 
 export const Dialog: React.FC<PropsWithChildren<{ className: string }>> = ({
     children,
@@ -43,7 +43,7 @@ export const QueryDialog: React.FC<{ input: string }> = ({ input }) => {
     )
 }
 
-export const ResponseDialog: React.FC<{ message: ApiCallResponse }> = ({
+export const ResponseDialog: React.FC<{ message: GptSqlResponse }> = ({
     message
 }) => (
     <LeftDialog>
