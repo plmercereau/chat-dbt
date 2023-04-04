@@ -7,7 +7,7 @@ import {
     TableProps
 } from '@mantine/core'
 import { Prism } from '@mantine/prism'
-import { useState } from 'react'
+import { PropsWithChildren, useState } from 'react'
 
 import { useStyles } from './styles'
 import { getOptions } from '@/pages/_options'
@@ -21,7 +21,11 @@ const JsonResult: React.FC<GptSqlResultItem> = ({ count, rows, columns }) => {
     } = useStyles()
     return (
         <Prism classNames={{ code }} language='json'>
-            {JSON.stringify(columns ? rows : { count }, null, 2)}
+            {JSON.stringify(
+                columns ? rows : count === null ? true : count,
+                null,
+                2
+            )}
         </Prism>
     )
 }
@@ -33,6 +37,11 @@ const TableResult: React.FC<GptSqlResultItem> = ({ count, rows, columns }) => {
         withBorder: true,
         withColumnBorders: true
     }
+
+    if (count === null) {
+        return <div>Success</div>
+    }
+
     if (columns === undefined)
         return (
             <Table {...props}>
@@ -48,6 +57,7 @@ const TableResult: React.FC<GptSqlResultItem> = ({ count, rows, columns }) => {
                 </tbody>
             </Table>
         )
+
     return (
         <Table {...props}>
             <thead>
@@ -70,6 +80,17 @@ const TableResult: React.FC<GptSqlResultItem> = ({ count, rows, columns }) => {
     )
 }
 
+const ResultContainer: React.FC<
+    PropsWithChildren<{ index: number; total: number }>
+> = ({ children, index, total }) => {
+    const title = total > 1 ? `Result ${index + 1}` : 'Result'
+    return (
+        <>
+            <Title order={4}>{title}</Title>
+            <Container>{children}</Container>
+        </>
+    )
+}
 const ItemResult: React.FC<{
     item: GptSqlResultItem
     index: number
@@ -78,27 +99,44 @@ const ItemResult: React.FC<{
     // ? keep the max width of the component
     const [format, setFormat] = useState(options.format)
     const { classes } = useStyles()
+
+    if (item.count === null) {
+        return (
+            <ResultContainer index={index} total={total}>
+                Success.
+            </ResultContainer>
+        )
+    }
+
+    if (item.columns === undefined) {
+        return (
+            <ResultContainer index={index} total={total}>
+                {item.count || 'No'} affected{' '}
+                {item.count === 1 ? 'row' : 'rows'}.
+            </ResultContainer>
+        )
+    }
+
     return (
-        <>
-            <Title order={4}>
-                {total > 1 ? `Result ${index + 1}` : 'Result'}
-            </Title>
-            <Group position='center'>
-                <SegmentedControl
-                    radius='sm'
-                    value={format}
-                    onChange={setFormat}
-                    data={[
-                        { label: 'Table', value: 'table' },
-                        { label: 'JSON', value: 'json' }
-                    ]}
-                />
-            </Group>
-            <Container className={classes.flex}>
+        <ResultContainer index={index} total={total}>
+            {(item.columns !== undefined || item.count !== null) && (
+                <Group position='center'>
+                    <SegmentedControl
+                        radius='sm'
+                        value={format}
+                        onChange={setFormat}
+                        data={[
+                            { label: 'Table', value: 'table' },
+                            { label: 'JSON', value: 'json' }
+                        ]}
+                    />
+                </Group>
+            )}
+            <div className={classes.flex}>
                 {format === 'json' && <JsonResult {...item} />}
                 {format === 'table' && <TableResult {...item} />}
-            </Container>
-        </>
+            </div>
+        </ResultContainer>
     )
 }
 

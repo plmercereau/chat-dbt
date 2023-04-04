@@ -7,7 +7,7 @@ import { getSqlConnection } from './sql-connection'
 export type GptSqlResultItem = {
     rows: RowList<(Row & Iterable<Row>)[]>
     columns?: ColumnList<any>
-    count: number
+    count: number | null
 }
 
 export type GptSqlResponse = {
@@ -103,7 +103,7 @@ export const runSqlQuery = async (options: {
 }): Promise<GptSqlResultItem[]> => {
     const { sqlQuery, database } = options
     const result = await getSqlConnection(database).unsafe(sqlQuery)
-    return result.columns
+    return result.columns || result.length === 0
         ? // * Single result e.g. SELECT * FROM users
           [
               {

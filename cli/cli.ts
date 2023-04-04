@@ -85,8 +85,11 @@ const executeQueryAndShowResult = async ({
         switch (format) {
             case 'table':
                 result.forEach(item => {
-                    console.log(item)
-                    if (item?.columns) {
+                    if (item.count === null) {
+                        // * Success, no data
+                        return
+                    }
+                    if (item.columns) {
                         // * Data is expected e.g. SELECT statement
                         console.table(item.rows)
                     } else {
@@ -98,8 +101,8 @@ const executeQueryAndShowResult = async ({
             case 'json':
                 console.log(
                     JSON.stringify(
-                        result.map(item =>
-                            item.columns ? item.rows : { count: item.count }
+                        result.map(({ count, rows, columns }) =>
+                            columns ? rows : count === null ? true : count
                         ),
                         null,
                         2
@@ -147,6 +150,5 @@ const executeQueryAndShowResult = async ({
                 ...options
             })
         }
-        return
     }
 }

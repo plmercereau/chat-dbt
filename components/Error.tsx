@@ -1,4 +1,4 @@
-import { Title } from '@mantine/core'
+import { Container, Title } from '@mantine/core'
 
 export const Error: React.FC<{
     error?: string
@@ -9,7 +9,7 @@ export const Error: React.FC<{
     return (
         <>
             <Title order={4}>Error</Title>
-            {error}
+            <Container>{error}</Container>
         </>
     )
 }
