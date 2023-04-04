@@ -27,6 +27,9 @@ const program = envProgram
             .makeOptionMandatory(true)
     )
     .addOption(
+        new Option('-m, --model <model>', 'model to use').default('gpt-4')
+    )
+    .addOption(
         new Option(
             '-c, --confirm',
             'ask confirmation before running the SQL query'
@@ -55,7 +58,7 @@ const program = envProgram
 export type CommonOptions = ReturnType<typeof program.opts>
 
 type SecretOptionKeys = 'apiKey' | 'organization' | 'database'
-export type PublicOptions = Omit<CommonOptions, SecretOptionKeys>
+export type PublicOptions = Omit<CommonOptions, SecretOptionKeys | 'env'>
 export type SecretOptions = Pick<CommonOptions, SecretOptionKeys>
 
 program.configureHelp().showGlobalOptions = true

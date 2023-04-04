@@ -72,13 +72,15 @@ export const createMessages = async ({
 
 export const getSqlQuery = async ({
     openai,
+    model,
     ...options
 }: MessageOptions & {
     openai: OpenAIApi
+    model: string
 }): Promise<string> => {
     // * Query OpenAI
     const completion = await openai.createChatCompletion({
-        model: 'gpt-4',
+        model,
         messages: await createMessages(options),
         temperature: 0
     })
@@ -99,6 +101,7 @@ export const runSqlQuery = async (options: {
 
 export const runQuery = async (options: {
     openai: OpenAIApi
+    model: string
     /** @example Number of users who have a first name starting with 'A' */
     query: string
     database: string

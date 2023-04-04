@@ -7,7 +7,7 @@ import { parse, fileURLToPath } from 'url'
 import { WebOptions } from './index'
 
 export const startWeb = async ({ port, browser, ...rest }: WebOptions) => {
-    const { apiKey, organization, database, ...options } = rest
+    const { apiKey, organization, database, env, ...options } = rest
     const app = next({
         dev: false,
         conf: {

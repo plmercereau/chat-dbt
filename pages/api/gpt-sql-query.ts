@@ -2,10 +2,11 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { Configuration, OpenAIApi } from 'openai'
 
 import { GptSqlResult, runQuery } from '@/shared/chat-gpt'
-import { getSecrets } from '../_options'
+import { getOptions, getSecrets } from '../_options'
 import { ColumnList, Row, RowList } from 'postgres'
 
 const { apiKey, organization, database } = getSecrets()
+const { model } = getOptions()
 const openai = new OpenAIApi(new Configuration({ apiKey, organization }))
 
 export type ApiResult = Array<{
@@ -28,6 +29,7 @@ export default async function handler(
     }
     const { error, result, sqlQuery } = await runQuery({
         openai,
+        model,
         query,
         database
     })

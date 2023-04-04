@@ -39,7 +39,7 @@ const executeQueryAndShowResult = async ({
     openai: OpenAIApi
     history?: GptSqlResult[]
 }) => {
-    const { openai, database, format, keepContext } = options
+    const { openai, database, format, keepContext, model } = options
     const spinner = ora()
     spinner.start()
     let sqlQuery: string = ''
@@ -47,7 +47,13 @@ const executeQueryAndShowResult = async ({
         spinner.text = 'Getting SQL introspection...'
         const introspection = await getIntrospection(database)
         spinner.text = 'Calling OpenAI...'
-        sqlQuery = await getSqlQuery({ query, history, openai, introspection })
+        sqlQuery = await getSqlQuery({
+            query,
+            history,
+            openai,
+            model,
+            introspection
+        })
         if (options.confirm) {
             // * Ask the user's confirmation before executing the SQL query
             spinner.stop()

@@ -12,6 +12,10 @@ export default {
     },
     /** @type {import('./cli').PublicOptions} */
     publicRuntimeConfig: {
-        format: 'table'
+        format: 'table',
+        model: 'gpt-4',
+        confirm: false,
+        retries: 3,
+        keepContext: false
     }
 }
