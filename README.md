@@ -1,27 +1,41 @@
 # Chat-DBT
 
+A simple prompt to interact with your database using OpenAI ChatGPT.
+
 ## Usage
-
-```sh
-npx chat-dbt [options]
-npx chat-dbt --help
-```
-
-### Command-line interface
 
 ```sh
 npx chat-dbt --database postgres://user:password@localhost:5432/postgres --key [your-openai-key] --org [your-openai-org]
 ```
 
-### Web interface
+You can also start the Web interface instead of the CLI:
 
 ```sh
 npx chat-dbt web --database postgres://user:password@localhost:5432/postgres --key [your-openai-key] --org [your-openai-org]
 ```
 
-### Use a `.env` file
+To get all the available options:
 
-<!-- TODO -->
+```sh
+nxp chat-dbt --help
+```
+
+### Environment variables
+
+```sh
+export DB_CONNECTION_STRING=postgres://user:password@localhost:5432/postgres
+export OPENAI_API_KEY=[your-openai-key]
+export OPENAI_ORGANIZATION=[your-openai-org]
+npx chat-dbt
+```
+
+You can also store your secrets into a `.env` file
+
+```
+DB_CONNECTION_STRING=postgres://user:password@localhost:5432/postgres
+OPENAI_API_KEY=[your-openai-key]
+OPENAI_ORGANIZATION=[your-openai-org]
+```
 
 ### Use another OpenAI model
 
@@ -70,6 +84,7 @@ pnpm run dev:web
 
 ## Roadmap
 
+-   [ ] Complete this readme
 -   [ ] Implement the options into the web interface
     -   [ ] confirm
     -   [ ] automatic corrections
@@ -80,10 +95,8 @@ pnpm run dev:web
     -   [ ] Web UI: https://mantine.dev/core/autocomplete/
 -   [ ] Editable SQL query before confirmation (and keep the modifications in the history)
 -   [ ] Editable SQL query after an error (and keep the modifications in the history)
--   [ ] Changesets + publish
--   [ ] Complete this readme
 
-### Post-release
+### To be planned
 
 -   [ ] Use the npm package as a library
 -   [ ] Statistics e.g. time per request, tokens used, etc

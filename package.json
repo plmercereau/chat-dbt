@@ -8,7 +8,9 @@
     "build:cli": "node build.js",
     "build:web": "next build",
     "start": "node dist/index.mjs --env .env.local",
-    "lint": "next lint"
+    "lint": "next lint",
+    "release": "run-s build publish",
+    "publish": "changeset publish"
   },
   "bin": "./dist/index.mjs",
   "dependencies": {
@@ -24,6 +26,7 @@
     "prompts": "^2.4.2"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.26.1",
     "@emotion/react": "^11.10.6",
     "@emotion/server": "^11.10.0",
     "@mantine/core": "^6.0.4",
