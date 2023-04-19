@@ -20,14 +20,14 @@ chat-dbt --help
 
 ```sh
 chat-dbt --database postgres://user:password@localhost:5432/postgres \
-    --key [your-openai-key] --org [your-openai-organisation]
+    --key your-openai-key --org your-openai-organisation
 ```
 
 ### Web interface
 
 ```sh
 chat-dbt web --database postgres://user:password@localhost:5432/postgres \
-    --key [your-openai-key] --org [your-openai-organisation]
+    --key your-openai-key --org your-openai-organisation
 ```
 
 ## Options
@@ -36,8 +36,8 @@ chat-dbt web --database postgres://user:password@localhost:5432/postgres \
 
 ```sh
 export DB_CONNECTION_STRING=postgres://user:password@localhost:5432/postgres
-export OPENAI_API_KEY=[your-openai-key]
-export OPENAI_ORGANIZATION=[your-openai-organisation]
+export OPENAI_API_KEY=your-openai-key
+export OPENAI_ORGANIZATION=your-openai-organisation
 chat-dbt
 ```
 
@@ -45,8 +45,8 @@ Chat-DBT will also read the secrets mentioned above from a `.env` file, if it ex
 
 ```
 DB_CONNECTION_STRING=postgres://user:password@localhost:5432/postgres
-OPENAI_API_KEY=[your-openai-key]
-OPENAI_ORGANIZATION=[your-openai-organisation]
+OPENAI_API_KEY=your-openai-key
+OPENAI_ORGANIZATION=your-openai-organisation
 ```
 
 You can also pass a different dotenv file name as an option:
