@@ -29,7 +29,7 @@ export OPENAI_ORGANIZATION=[your-openai-org]
 npx chat-dbt
 ```
 
-You can also store your secrets into a `.env` file
+You can also store your secrets in a `.env` file
 
 ```
 DB_CONNECTION_STRING=postgres://user:password@localhost:5432/postgres
