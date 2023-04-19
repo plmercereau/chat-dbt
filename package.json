@@ -1,7 +1,7 @@
 {
   "name": "chat-dbt",
   "version": "0.0.1",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev:web": "next dev",
     "build": "run-p build:*",
