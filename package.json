@@ -36,6 +36,7 @@
   "bin": "./dist/index.mjs",
   "dependencies": {
     "@commander-js/extra-typings": "^10.0.3",
+    "@mantine/core": "^6.0.8",
     "chalk": "^5.2.0",
     "commander": "^10.0.1",
     "dotenv": "^16.0.3",
@@ -50,7 +51,6 @@
     "@changesets/cli": "^2.26.1",
     "@emotion/react": "^11.10.6",
     "@emotion/server": "^11.10.0",
-    "@mantine/core": "^6.0.8",
     "@mantine/form": "^6.0.8",
     "@mantine/hooks": "^6.0.8",
     "@mantine/next": "^6.0.8",

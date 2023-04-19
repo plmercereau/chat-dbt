@@ -4,9 +4,11 @@ import { Configuration, OpenAIApi } from 'openai'
 import { GptSqlResponse, runQuery } from '@/shared/chat-gpt'
 import { getOptions, getSecrets } from '@/utils/options'
 
-const { apiKey, organization, database } = getSecrets()
+const { key, org, database } = getSecrets()
 const { model } = getOptions()
-const openai = new OpenAIApi(new Configuration({ apiKey, organization }))
+const openai = new OpenAIApi(
+    new Configuration({ apiKey: key, organization: org })
+)
 
 export default async function handler(
     req: NextApiRequest,

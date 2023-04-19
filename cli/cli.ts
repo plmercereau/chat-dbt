@@ -10,8 +10,10 @@ import { CommonOptions } from './index'
 import { getErrorPrompt } from '@/shared/error'
 
 export const startCLI = async (options: CommonOptions) => {
-    const { apiKey, organization } = options
-    const openai = new OpenAIApi(new Configuration({ apiKey, organization }))
+    const { key, org } = options
+    const openai = new OpenAIApi(
+        new Configuration({ apiKey: key, organization: org })
+    )
     while (true) {
         const { query } = await prompts(
             {

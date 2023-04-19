@@ -7,12 +7,12 @@ import { parse, fileURLToPath } from 'url'
 import { WebOptions } from './index'
 
 export const startWeb = async ({ port, browser, ...rest }: WebOptions) => {
-    const { apiKey, organization, database, env, ...options } = rest
+    const { key, org, database, env, ...options } = rest
     const app = next({
         dev: false,
         conf: {
             distDir: 'web',
-            serverRuntimeConfig: { apiKey, organization, database },
+            serverRuntimeConfig: { org, key, database },
             publicRuntimeConfig: options
         },
         dir: dirname(fileURLToPath(import.meta.url))
