@@ -1,5 +1,11 @@
 # chat-dbt
 
+## 0.1.4
+
+### Patch Changes
+
+- e0d3506: add both @mantine/core and @mantine/next as dependencies
+
 ## 0.1.3
 
 ### Patch Changes
