@@ -17,12 +17,12 @@ const program = envProgram
             .makeOptionMandatory(true)
     )
     .addOption(
-        new Option('--api-key <key>, --key <key>', 'OpenAI key')
+        new Option('--key <key>', 'OpenAI key')
             .env('OPENAI_API_KEY')
             .makeOptionMandatory(true)
     )
     .addOption(
-        new Option('--organization <org>, --org <org>', 'OpenAI organization')
+        new Option('--org <org>', 'OpenAI organization')
             .env('OPENAI_ORGANIZATION')
             .makeOptionMandatory(true)
     )
@@ -57,7 +57,7 @@ const program = envProgram
 
 export type CommonOptions = ReturnType<typeof program.opts>
 
-type SecretOptionKeys = 'apiKey' | 'organization' | 'database'
+type SecretOptionKeys = 'key' | 'org' | 'database'
 export type PublicOptions = Omit<CommonOptions, SecretOptionKeys | 'env'>
 export type SecretOptions = Pick<CommonOptions, SecretOptionKeys>
 
