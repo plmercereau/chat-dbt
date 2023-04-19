@@ -1,6 +1,6 @@
 {
   "name": "chat-dbt",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev:web": "next dev",
@@ -9,7 +9,7 @@
     "build:web": "next build",
     "start": "node dist/index.mjs --env .env.local",
     "lint": "next lint",
-    "release": "run-s build publish",
+    "changeset": "changeset",
     "publish": "changeset publish"
   },
   "bin": "./dist/index.mjs",
