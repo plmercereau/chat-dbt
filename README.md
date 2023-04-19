@@ -1,6 +1,6 @@
 # Chat-DBT
 
-A simple prompt to interact with your database using OpenAI ChatGPT.
+A simple prompt for interacting with your database using OpenAI ChatGPT.
 
 ## Usage
 
