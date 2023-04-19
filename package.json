@@ -1,6 +1,6 @@
 {
   "name": "chat-dbt",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A simple prompt for interacting with your database using OpenAI ChatGPT",
   "license": "MIT",
   "keywords": [

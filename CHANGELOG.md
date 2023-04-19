@@ -1,5 +1,11 @@
 # chat-dbt
 
+## 0.1.3
+
+### Patch Changes
+
+- 75fa5ad: add mantine
+
 ## 0.1.2
 
 ### Patch Changes
