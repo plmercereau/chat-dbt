@@ -2,24 +2,30 @@
 
 A simple prompt for interacting with your database using OpenAI ChatGPT.
 
+## Installation
+
+```sh
+npm i -g chat-dbt
+```
+
 ## Usage
 
 ```sh
-npx chat-dbt [options]
-npx chat-dbt web [options]
-npx chat-dbt --help
+chat-dbt [options]
+chat-dbt web [options]
+chat-dbt --help
 ```
 
 ### Command-line interface
 
 ```sh
-npx chat-dbt --database postgres://user:password@localhost:5432/postgres --key [your-openai-key] --org [your-openai-org]
+chat-dbt --database postgres://user:password@localhost:5432/postgres --key [your-openai-key] --org [your-openai-org]
 ```
 
 ### Web interface
 
 ```sh
-npx chat-dbt web --database postgres://user:password@localhost:5432/postgres --key [your-openai-key] --org [your-openai-org]
+chat-dbt web --database postgres://user:password@localhost:5432/postgres --key [your-openai-key] --org [your-openai-org]
 ```
 
 ## Options
@@ -30,7 +36,7 @@ npx chat-dbt web --database postgres://user:password@localhost:5432/postgres --k
 export DB_CONNECTION_STRING=postgres://user:password@localhost:5432/postgres
 export OPENAI_API_KEY=[your-openai-key]
 export OPENAI_ORGANIZATION=[your-openai-org]
-npx chat-dbt
+chat-dbt
 ```
 
 You can also store your secrets in a `.env` file
@@ -39,6 +45,12 @@ You can also store your secrets in a `.env` file
 DB_CONNECTION_STRING=postgres://user:password@localhost:5432/postgres
 OPENAI_API_KEY=[your-openai-key]
 OPENAI_ORGANIZATION=[your-openai-org]
+```
+
+You can also pass a different dotenv file name as an option:
+
+```sh
+chat-dbt --env .env.custom
 ```
 
 ### Use another OpenAI model
