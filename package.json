@@ -19,6 +19,8 @@
   },
   "files": [
     "dist",
+    "!dist/web/cache",
+    "!dist/web/trace",
     "README.md"
   ],
   "scripts": {
