@@ -1,7 +1,26 @@
 {
   "name": "chat-dbt",
   "version": "0.0.1",
-  "private": true,
+  "description": "A simple prompt for interacting with your database using OpenAI ChatGPT",
+  "license": "MIT",
+  "keywords": [
+    "ChatGPT",
+    "OpenAI",
+    "postgres",
+    "postgresql",
+    "SQL"
+  ],
+  "author": "Pierre-Louis Mercereqau",
+  "homepage": "https://github.com/plmercereau/chat-dbt",
+  "bugs": "https://github.com/plmercereau/chat-dbt/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/plmercereau/chat-dbt.git"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "dev:web": "next dev",
     "build": "run-p build:*",
