@@ -3,14 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev:web": "next dev",
     "build": "run-p build:*",
     "build:cli": "node build.js",
     "build:web": "next build",
     "start": "node dist/index.mjs --env .env.local",
-    "lint": "next lint",
-    "demo:migrate": "tsx demo/migrate.ts",
-    "demo:generate": "drizzle-kit generate:pg"
+    "lint": "next lint"
   },
   "bin": "./dist/index.mjs",
   "dependencies": {
@@ -41,8 +39,6 @@
     "@types/prompts": "^2.4.4",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
-    "drizzle-kit": "^0.17.0",
-    "drizzle-orm": "^0.22.0",
     "esbuild": "^0.17.14",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",

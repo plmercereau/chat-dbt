@@ -16,8 +16,10 @@
 -   [ ] Complete this readme
 
 ## Post-release
+
 Library
 Stats eg time per request, tokens used, etc
+
 -   [ ] Web interface in dark/light mode
 -   [ ] Add CI tests for both the CLI and the web interface
 -   [ ] Nice to have (but complicated): when the context is preserved, allow queries from previous data e.g. "translate the previous result into french"
@@ -36,3 +38,32 @@ Stats eg time per request, tokens used, etc
 -   [x] Add a `--model` option to choose the OpenAI model
 -   [x] Spinner
 -   [x] Manual requests for corrections
+
+## Development
+
+```sh
+# Clone the repository
+git clone https://github.com/plmercereau/chat-dbt
+cd chat-dbt
+
+# Install Node dependencies
+pnpm i
+
+# Create a .env.local file
+cp .env.local.example .env.local
+
+# Then, edit the .env.local file to fill your OpenAI API key and organisation
+
+# Start the demo database
+docker-compose up -d
+```
+
+### Use the Web interface
+
+```sh
+pnpm run dev:web
+```
+
+### Use the CLI
+
+TODO nodemon
