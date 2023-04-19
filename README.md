@@ -39,7 +39,7 @@ export OPENAI_ORGANIZATION=[your-openai-org]
 chat-dbt
 ```
 
-You can also store your secrets in a `.env` file
+Chat-DBT will also read the secrets mentioned above from a `.env` file, if it exists:
 
 ```
 DB_CONNECTION_STRING=postgres://user:password@localhost:5432/postgres
