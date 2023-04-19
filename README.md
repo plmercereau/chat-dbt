@@ -5,20 +5,24 @@ A simple prompt for interacting with your database using OpenAI ChatGPT.
 ## Usage
 
 ```sh
+npx chat-dbt [options]
+npx chat-dbt web [options]
+npx chat-dbt --help
+```
+
+### Command-line interface
+
+```sh
 npx chat-dbt --database postgres://user:password@localhost:5432/postgres --key [your-openai-key] --org [your-openai-org]
 ```
 
-You can also start the Web interface instead of the CLI:
+### Web interface
 
 ```sh
 npx chat-dbt web --database postgres://user:password@localhost:5432/postgres --key [your-openai-key] --org [your-openai-org]
 ```
 
-To get all the available options:
-
-```sh
-nxp chat-dbt --help
-```
+## Options
 
 ### Environment variables
 
@@ -72,13 +76,13 @@ cp .env.local.example .env.local
 docker-compose up -d
 ```
 
-### Use the Web interface
+### Develop the Web interface
 
 ```sh
 pnpm run dev:web
 ```
 
-### Use the CLI
+### Develop the CLI
 
 <!-- TODO nodemon -->
 
