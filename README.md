@@ -19,13 +19,15 @@ chat-dbt --help
 ### Command-line interface
 
 ```sh
-chat-dbt --database postgres://user:password@localhost:5432/postgres --key [your-openai-key] --org [your-openai-org]
+chat-dbt --database postgres://user:password@localhost:5432/postgres \
+    --key [your-openai-key] --org [your-openai-org]
 ```
 
 ### Web interface
 
 ```sh
-chat-dbt web --database postgres://user:password@localhost:5432/postgres --key [your-openai-key] --org [your-openai-org]
+chat-dbt web --database postgres://user:password@localhost:5432/postgres \
+    --key [your-openai-key] --org [your-openai-org]
 ```
 
 ## Options
@@ -55,7 +57,13 @@ chat-dbt --env .env.custom
 
 ### Use another OpenAI model
 
-<!-- TODO -->
+The OpenAI model is set to `gpt-4` by default. You can choose another chat model with the `--model` option, for instance:
+
+```sh
+chat-dbt --model gpt-3.5-turbo
+```
+
+You can have a look at the [list of compatible chat completion models in the OpenAI documentation](https://platform.openai.com/docs/models/model-endpoint-compatibility).
 
 ### Ask for confirmation before executing the SQL query
 
