@@ -1,9 +1,12 @@
 # Chat-DBT
 
+A simple prompt for interacting with your database using OpenAI ChatGPT.
+
 ## Usage
 
 ```sh
 npx chat-dbt [options]
+npx chat-dbt web [options]
 npx chat-dbt --help
 ```
 
@@ -19,9 +22,24 @@ npx chat-dbt --database postgres://user:password@localhost:5432/postgres --key [
 npx chat-dbt web --database postgres://user:password@localhost:5432/postgres --key [your-openai-key] --org [your-openai-org]
 ```
 
-### Use a `.env` file
+## Options
 
-<!-- TODO -->
+### Environment variables
+
+```sh
+export DB_CONNECTION_STRING=postgres://user:password@localhost:5432/postgres
+export OPENAI_API_KEY=[your-openai-key]
+export OPENAI_ORGANIZATION=[your-openai-org]
+npx chat-dbt
+```
+
+You can also store your secrets in a `.env` file
+
+```
+DB_CONNECTION_STRING=postgres://user:password@localhost:5432/postgres
+OPENAI_API_KEY=[your-openai-key]
+OPENAI_ORGANIZATION=[your-openai-org]
+```
 
 ### Use another OpenAI model
 
@@ -58,18 +76,19 @@ cp .env.local.example .env.local
 docker-compose up -d
 ```
 
-### Use the Web interface
+### Develop the Web interface
 
 ```sh
 pnpm run dev:web
 ```
 
-### Use the CLI
+### Develop the CLI
 
 <!-- TODO nodemon -->
 
 ## Roadmap
 
+-   [ ] Complete this readme
 -   [ ] Implement the options into the web interface
     -   [ ] confirm
     -   [ ] automatic corrections
@@ -80,10 +99,8 @@ pnpm run dev:web
     -   [ ] Web UI: https://mantine.dev/core/autocomplete/
 -   [ ] Editable SQL query before confirmation (and keep the modifications in the history)
 -   [ ] Editable SQL query after an error (and keep the modifications in the history)
--   [ ] Changesets + publish
--   [ ] Complete this readme
 
-### Post-release
+### To be planned
 
 -   [ ] Use the npm package as a library
 -   [ ] Statistics e.g. time per request, tokens used, etc
