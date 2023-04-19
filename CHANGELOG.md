@@ -4,6 +4,12 @@
 
 ### Patch Changes
 
+- 45d1d6d: add mantine/next dependency
+
+## 0.1.2
+
+### Patch Changes
+
 - 16261a7: don't use option flag usage alias
 - 16261a7: include missing mantine dependency
 
