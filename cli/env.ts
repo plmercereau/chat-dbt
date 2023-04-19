@@ -1,8 +1,6 @@
 import { Command } from '@commander-js/extra-typings'
 import { config } from 'dotenv'
 
-import { getConnectionStringFromEnv } from './connection-string'
-
 // * Create a basic program to parse the .env argument
 export const envProgram = new Command().option(
     '-e, --env <filename>',
@@ -17,11 +15,6 @@ envProgram.allowUnknownOption(true).helpOption(false)
 envProgram.parse()
 // * Load the .env file
 config({ path: envProgram.opts().env })
-
-if (!process.env.DB_CONNECTION_STRING) {
-    // * Set the DB_CONNECTION_STRING if it is not already set
-    process.env.DB_CONNECTION_STRING = getConnectionStringFromEnv()
-}
 
 // * Restore the default behaviour for the main program: activate help and make sure no unknown option is allowed
 envProgram.allowUnknownOption(false).helpOption(true)

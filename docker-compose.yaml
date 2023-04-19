@@ -1,11 +1,13 @@
 version: '3.8'
 services:
   db:
-    env_file: .env.local
     image: postgres:15-alpine
     restart: always
     ports:
       - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     volumes: 
       - db:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
