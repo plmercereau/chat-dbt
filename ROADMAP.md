@@ -5,15 +5,15 @@
     -   [ ] confirm
     -   [ ] automatic corrections
     -   [ ] keep-context
--   [ ] Use `inquirer` instead of `prompts` (has an editor prompt, a yes/no/other prompt, and seems easier to tweak to implement history)
 -   [ ] Arrow up/down to get the previous queries
-    -   [ ] CLI
+    -   [x] CLI
     -   [ ] Web UI: https://mantine.dev/core/autocomplete/
 -   [ ] Editable SQL query before confirmation (and keep the modifications in the history)
 -   [ ] Editable SQL query after an error (and keep the modifications in the history)
 
 ## To be planned
 
+-   [ ] Vitests
 -   [ ] Use the npm package as a library
 -   [ ] Statistics e.g. time per request, tokens used, etc
 -   [ ] Web interface in dark/light mode
