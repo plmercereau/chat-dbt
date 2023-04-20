@@ -1,29 +1,35 @@
 import chalk from 'chalk'
+import inquirer from 'inquirer'
 import { Configuration, OpenAIApi } from 'openai'
 import ora from 'ora'
-import prompts from 'prompts'
 
 import { GptSqlResponse, getSqlQuery, runSqlQuery } from '@/shared/chat-gpt'
+import { getErrorPrompt } from '@/shared/error'
 import { getIntrospection } from '@/shared/introspection'
 
+import InputHistoryPrompt from './input-history'
 import { CommonOptions } from './index'
-import { getErrorPrompt } from '@/shared/error'
+
+inquirer.registerPrompt('input-history', InputHistoryPrompt)
 
 export const startCLI = async (options: CommonOptions) => {
     const { key, org } = options
     const openai = new OpenAIApi(
         new Configuration({ apiKey: key, organization: org })
     )
+    const history: string[] = []
+
     while (true) {
-        const { query } = await prompts(
+        const { query } = await inquirer.prompt([
             {
-                type: 'text',
+                type: 'input-history',
                 name: 'query',
                 message: 'Describe your query',
-                validate: value => !!value || 'Query cannot be empty'
-            },
-            { onCancel: () => process.exit() }
-        )
+                validate: value => !!value || 'Query cannot be empty',
+                history
+            }
+        ])
+        history.push(query)
         await executeQueryAndShowResult({
             openai,
             query,
@@ -61,12 +67,14 @@ const executeQueryAndShowResult = async ({
             // * Ask the user's confirmation before executing the SQL query
             spinner.stop()
             console.log(chalk.greenBright(sqlQuery))
-            const { confirm } = await prompts({
-                type: 'confirm',
-                name: 'confirm',
-                message: 'Execute the query?',
-                initial: true
-            })
+            const { confirm } = await inquirer.prompt([
+                {
+                    type: 'confirm',
+                    name: 'confirm',
+                    message: 'Execute the query?',
+                    default: true
+                }
+            ])
             if (!confirm) {
                 return
             }
@@ -121,15 +129,14 @@ const executeQueryAndShowResult = async ({
             retry = true
             options.askCorrections--
         } else {
-            const prompt = await prompts(
+            const prompt = await inquirer.prompt([
                 {
                     type: 'confirm',
                     name: 'retry',
                     message: 'Ask correction?',
-                    initial: options.askCorrections === undefined ? true : false
-                },
-                { onCancel: () => process.exit() }
-            )
+                    default: options.askCorrections === undefined ? true : false
+                }
+            ])
             retry = prompt.retry
         }
         if (retry) {
