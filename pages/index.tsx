@@ -1,13 +1,13 @@
 import {
     ActionIcon,
+    Autocomplete,
     Flex,
     Loader,
-    Textarea,
     useMantineTheme
 } from '@mantine/core'
 import { useScrollIntoView } from '@mantine/hooks'
 import { IconSend } from '@tabler/icons-react'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 
 import { LeftDialog, QueryDialog, ResponseDialog } from '@/components/Dialogs'
 import { useStyles } from '@/utils/styles'
@@ -18,14 +18,23 @@ import React from 'react'
 const Page: React.FC = () => {
     const { loading, setLoading, history, setHistory } = useAppContext()
     const [query, setQuery] = useState('')
-    const { scrollIntoView, targetRef } = useScrollIntoView<HTMLInputElement>()
+    const previousQueries = [...new Set(history.map(i => i.query))].sort()
 
+    const { scrollIntoView, targetRef } = useScrollIntoView<HTMLInputElement>()
     const { classes } = useStyles()
     const theme = useMantineTheme()
     const getColor = (color: string) =>
         theme.colors[color][theme.colorScheme === 'dark' ? 5 : 7]
 
-    const submit = async () => {
+    const run = async () => {
+        targetRef.current.dispatchEvent(
+            new KeyboardEvent('keypress', {
+                key: 'Escape',
+                keyCode: 27,
+                which: 27
+            })
+        )
+        scrollIntoView()
         setLoading(true)
         const currentHistory = [...history]
         setHistory([...currentHistory, { query }])
@@ -34,14 +43,8 @@ const Page: React.FC = () => {
         setLoading(false)
         setHistory([...currentHistory, result])
         setQuery('')
+        scrollIntoView()
     }
-
-    useEffect(() => {
-        if (!loading) {
-            scrollIntoView()
-            targetRef.current.focus()
-        }
-    }, [targetRef, loading, scrollIntoView])
 
     return (
         <Flex className={classes.flex} direction='column'>
@@ -60,29 +63,30 @@ const Page: React.FC = () => {
                     <Loader />
                 </LeftDialog>
             )}
-            <Textarea
-                disabled={loading}
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                onKeyDown={e => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault()
-                        submit()
-                    }
+            <form
+                onSubmit={e => {
+                    e.preventDefault()
+                    run()
                 }}
-                placeholder='Type request here'
-                autosize
-                rightSection={
-                    <ActionIcon
-                        color={getColor('blue')}
-                        onClick={submit}
-                        disabled={loading}
-                    >
-                        <IconSend size='1.125rem' />
-                    </ActionIcon>
-                }
-            />
-            <div ref={targetRef} />
+            >
+                <Autocomplete
+                    ref={targetRef}
+                    disabled={loading}
+                    value={query}
+                    data={previousQueries}
+                    onChange={setQuery}
+                    placeholder='Type request here'
+                    rightSection={
+                        <ActionIcon
+                            color={getColor('blue')}
+                            onClick={run}
+                            disabled={loading}
+                        >
+                            <IconSend size='1.125rem' />
+                        </ActionIcon>
+                    }
+                />
+            </form>
         </Flex>
     )
 }

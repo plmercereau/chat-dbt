@@ -5,9 +5,6 @@
     -   [ ] confirm
     -   [ ] automatic corrections
     -   [ ] keep-context
--   [ ] Arrow up/down to get the previous queries
-    -   [x] CLI
-    -   [ ] Web UI: https://mantine.dev/core/autocomplete/
 -   [ ] Editable SQL query before confirmation (and keep the modifications in the history)
 -   [ ] Editable SQL query after an error (and keep the modifications in the history)
 
