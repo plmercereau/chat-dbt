@@ -96,12 +96,14 @@ cp .env.local.example .env.local
 docker-compose up -d
 ```
 
+### Develop the CLI
+
+```sh
+pnpm run dev:cli
+```
+
 ### Develop the Web interface
 
 ```sh
 pnpm run dev:web
 ```
-
-### Develop the CLI
-
-<!-- TODO nodemon -->
