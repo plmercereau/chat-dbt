@@ -27,8 +27,10 @@ const Page: React.FC = () => {
         theme.colors[color][theme.colorScheme === 'dark' ? 5 : 7]
 
     const run = async () => {
-        targetRef.current.dispatchEvent(
-            new KeyboardEvent('keypress', {
+        targetRef.current?.dispatchEvent(
+            new KeyboardEvent('keydown', {
+                bubbles: true,
+                cancelable: true,
                 key: 'Escape',
                 keyCode: 27,
                 which: 27

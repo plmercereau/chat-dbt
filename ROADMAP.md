@@ -1,5 +1,6 @@
 # Roadmap
 
+-   bug in the autocomplete component
 -   Complete the readme file
 -   Implement the options into the web interface
     -   confirm
@@ -13,7 +14,7 @@
 -   Vitests
 -   Use the npm package as a library
 -   Statistics e.g. time per request, tokens used, etc
--   Web interface in dark/light mode
+-   Dark/light mode toggle
 -   Add CI tests for both the CLI and the web interface
 -   Nice to have (but complicated): when the context is preserved, allow queries from previous data e.g. "translate the previous result into french"
 -   `--hide-sql`
