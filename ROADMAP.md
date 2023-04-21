@@ -1,6 +1,5 @@
 # Roadmap
 
--   bug in the autocomplete component
 -   Complete the readme file
 -   Implement the options into the web interface
     -   confirm
