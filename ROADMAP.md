@@ -1,19 +1,17 @@
 # Roadmap
 
 -   Complete the readme file
--   Implement the options into the web interface
-    -   confirm
-    -   automatic corrections
-    -   keep-context
--   Editable SQL query before confirmation
-    -   [x] CLI
-    -   [ ] Web UI
-    -   and keep the modifications in the history
+-   Keep the modifications of the edited SQL query in the history
 -   Editable SQL query after an error (and keep the modifications in the history)
 
 ## To be planned
 
 -   Vitests
+-   Implement the options into the web interface
+    -   confirm
+    -   automatic corrections
+    -   keep-context
+    -   Editable SQL query before confirmation (and keep the modifications in the history)
 -   Use the npm package as a library
 -   Statistics e.g. time per request, tokens used, etc
 -   Dark/light mode toggle
