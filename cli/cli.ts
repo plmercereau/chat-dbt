@@ -72,7 +72,7 @@ const executeQueryAndShowResult = async ({
                 console.log(chalk.greenBright(sqlQuery))
                 const { confirm } = await inquirer.prompt([
                     {
-                        type: 'expand',
+                        type: 'list',
                         name: 'confirm',
                         message: 'Execute the query?',
                         choices: [
