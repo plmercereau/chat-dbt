@@ -9,6 +9,7 @@ import { getIntrospection } from '@/shared/introspection'
 
 import InputHistoryPrompt from './input-history'
 import { CommonOptions } from './index'
+import { editFile } from './utils'
 
 inquirer.registerPrompt('input-history', InputHistoryPrompt)
 
@@ -66,16 +67,38 @@ const executeQueryAndShowResult = async ({
         if (options.confirm) {
             // * Ask the user's confirmation before executing the SQL query
             spinner.stop()
-            console.log(chalk.greenBright(sqlQuery))
-            const { confirm } = await inquirer.prompt([
-                {
-                    type: 'confirm',
-                    name: 'confirm',
-                    message: 'Execute the query?',
-                    default: true
+            // * Confirm the SQL query, with the possibility to edit it
+            const confirmPrompt = async (): Promise<void> => {
+                console.log(chalk.greenBright(sqlQuery))
+                const { confirm } = await inquirer.prompt([
+                    {
+                        type: 'expand',
+                        name: 'confirm',
+                        message: 'Execute the query?',
+                        choices: [
+                            { key: 'y', name: 'Yes', value: 'yes' },
+                            { key: 'n', name: 'No', value: 'no' },
+                            { key: 'e', name: 'Edit', value: 'edit' }
+                        ],
+                        default: 'yes'
+                    }
+                ])
+                if (confirm === 'no') {
+                    throw new Error('User cancelled')
                 }
-            ])
-            if (!confirm) {
+                if (confirm === 'edit') {
+                    sqlQuery = await editFile({
+                        contents: sqlQuery,
+                        postfix: '.sql'
+                    })
+                    // * Ask the user's confirmation again
+                    return confirmPrompt()
+                }
+            }
+            try {
+                await confirmPrompt()
+            } catch {
+                // * User did not confirm the query
                 return
             }
             spinner.start()

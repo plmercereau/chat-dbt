@@ -5,7 +5,10 @@
     -   confirm
     -   automatic corrections
     -   keep-context
--   Editable SQL query before confirmation (and keep the modifications in the history)
+-   Editable SQL query before confirmation
+    -   [x] CLI
+    -   [ ] Web UI
+    -   and keep the modifications in the history
 -   Editable SQL query after an error (and keep the modifications in the history)
 
 ## To be planned

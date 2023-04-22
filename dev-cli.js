@@ -17,7 +17,7 @@ const main = async () => {
 
     nodemon({
         script: 'dist/index.mjs',
-        args: ['--env', '.env.local']
+        args: ['--env', '.env.local', ...process.argv.slice(2)]
     })
     nodemon.on('restart', () => {
         // Write a new line when restarting
