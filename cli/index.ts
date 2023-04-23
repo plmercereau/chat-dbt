@@ -37,11 +37,9 @@ const program = envProgram
     )
     .addOption(
         new Option(
-            '-a, --ask-corrections <number>',
+            '-a, --auto-correct <number>',
             'number of calls to OpenAI for correcting an error in the SQL query'
-        )
-            .argParser(parseInteger)
-            .default(3)
+        ).argParser(parseInteger)
     )
     .addOption(
         new Option(

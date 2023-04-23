@@ -2,7 +2,6 @@
 
 -   Complete the readme file
 -   Keep the modifications of the edited SQL query in the history
--   Editable SQL query after an error (and keep the modifications in the history)
 
 ## To be planned
 
@@ -12,6 +11,8 @@
     -   automatic corrections
     -   keep-context
     -   Editable SQL query before confirmation (and keep the modifications in the history)
+    -   Editable SQL query after an error
+    -   Editable prompt query after an error
 -   Use the npm package as a library
 -   Statistics e.g. time per request, tokens used, etc
 -   Dark/light mode toggle

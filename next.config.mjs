@@ -15,7 +15,7 @@ export default {
         format: 'table',
         model: 'gpt-4',
         confirm: false,
-        askCorrections: 3,
+        autoCorrect: 0,
         keepContext: false
     }
 }
