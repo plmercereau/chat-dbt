@@ -134,9 +134,10 @@ const executeQueryAndShowResult = async ({
                         console.log(t.render())
                     } else {
                         // * No data is expected e.g. INSERT statement with no RETURNING clause
-                        const t = table([{ value: 'count' }], [item.count], {
-                            defaultValue: ''
-                        })
+                        const t = table(
+                            [{ value: 'count' }],
+                            [{ count: item.count }]
+                        )
                         console.log(t.render())
                     }
                 })
