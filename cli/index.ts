@@ -22,9 +22,9 @@ const program = envProgram
             .makeOptionMandatory(true)
     )
     .addOption(
-        new Option('--org <org>', 'OpenAI organization')
-            .env('OPENAI_ORGANIZATION')
-            .makeOptionMandatory(true)
+        new Option('--org <org>', 'OpenAI organization').env(
+            'OPENAI_ORGANIZATION'
+        )
     )
     .addOption(
         new Option('-m, --model <model>', 'model to use').default('gpt-4')

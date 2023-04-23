@@ -19,15 +19,13 @@ chat-dbt --help
 ### Command-line interface
 
 ```sh
-chat-dbt --database postgres://user:password@localhost:5432/postgres \
-    --key your-openai-key --org your-openai-organisation
+chat-dbt --database postgres://user:password@localhost:5432/postgres --key your-openai-key
 ```
 
 ### Web interface
 
 ```sh
-chat-dbt web --database postgres://user:password@localhost:5432/postgres \
-    --key your-openai-key --org your-openai-organisation
+chat-dbt web --database postgres://user:password@localhost:5432/postgres --key your-openai-key
 ```
 
 ## Options
