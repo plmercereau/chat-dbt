@@ -1,6 +1,6 @@
 # Chat-DBT
 
-A simple prompt for interacting with your database using OpenAI ChatGPT.
+Interact with your database using human-like queries through OpenAI GPT.
 
 ## Installation
 
@@ -55,7 +55,7 @@ OPENAI_API_KEY=your-openai-key
 OPENAI_ORGANIZATION=your-openai-organisation
 ```
 
-You can also pass a different dotenv file name as an option:
+You can also pass a different `.env` file name as an option:
 
 ```sh
 chat-dbt --env .env.custom
@@ -73,7 +73,7 @@ You can have a look at the [list of compatible chat completion models in the Ope
 
 ### Ask for confirmation before executing the SQL query
 
-You may not feel comfortable executing a query before previewing it. To preview the SQL query and confirm before running it, use the `--confirm` option. This option prompts you for confirmation and allows you to modify the query if needed.
+You may not feel comfortable executing a query before previewing it. To preview the SQL query and confirm before running it, use the `--confirm` option. This option prompts you for confirmation and allows you to modify the SQL query if needed before its execution.
 
 ```sh
 chat-dbt --confirm
@@ -89,7 +89,7 @@ Each attempt is iterative and builds upon the previous ones, so OpenAI is suppos
 chat-dbt --auto-correct 3
 ```
 
-### Keep context between queries
+<!-- ### Keep context between queries -->
 
 <!-- TODO -->
 
