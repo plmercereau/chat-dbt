@@ -30,6 +30,8 @@ chat-dbt --database postgres://user:password@localhost:5432/postgres --key your-
 chat-dbt web --database postgres://user:password@localhost:5432/postgres --key your-openai-key
 ```
 
+https://user-images.githubusercontent.com/24897252/233865764-2a8c4716-f052-47f5-9e48-0ec3a4cc818f.mp4
+
 ## Handling of errors
 
 Sometimes OpenAI's response may include an incorrect SQL query that fails. In such cases, you have the following options:
