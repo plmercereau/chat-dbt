@@ -1,5 +1,19 @@
 # chat-dbt
 
+## 0.2.0
+
+### Minor Changes
+
+- bfe1171: dark/light mode
+- 41ee18c: editable prompt or sql query after an error
+- 04da131: Access previous queries with an autocomplete input field in the Web UI
+- 9a655a5: Editable SQL query when asking for confirmation
+- 8eb16ff: Access previous queries with the up/down arrows in the CLI
+
+### Patch Changes
+
+- 8eb16ff: replace `prompts` by `inquirer`
+
 ## 0.1.4
 
 ### Patch Changes
