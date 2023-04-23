@@ -2,6 +2,7 @@ import chalk from 'chalk'
 import inquirer from 'inquirer'
 import { Configuration, OpenAIApi } from 'openai'
 import ora from 'ora'
+import table from 'tty-table'
 
 import { GptSqlResponse, getSqlQuery, runSqlQuery } from '@/shared/chat-gpt'
 import { getErrorPrompt } from '@/shared/error'
@@ -125,10 +126,18 @@ const executeQueryAndShowResult = async ({
                     }
                     if (item.columns) {
                         // * Data is expected e.g. SELECT statement
-                        console.table(item.rows)
+                        const t = table(
+                            item.columns.map(col => ({ value: col.name })),
+                            item.rows,
+                            { defaultValue: '' }
+                        )
+                        console.log(t.render())
                     } else {
                         // * No data is expected e.g. INSERT statement with no RETURNING clause
-                        console.table([{ count: item.count }])
+                        const t = table([{ value: 'count' }], [item.count], {
+                            defaultValue: ''
+                        })
+                        console.log(t.render())
                     }
                 })
                 break

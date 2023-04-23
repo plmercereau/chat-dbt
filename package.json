@@ -47,7 +47,8 @@
     "openai": "^3.2.1",
     "ora": "^6.3.0",
     "postgres": "^3.3.4",
-    "tmp": "^0.2.1"
+    "tmp": "^0.2.1",
+    "tty-table": "^4.2.1"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
