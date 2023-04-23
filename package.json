@@ -8,7 +8,10 @@
     "OpenAI",
     "postgres",
     "postgresql",
-    "SQL"
+    "SQL",
+    "database",
+    "db",
+    "natural-language"
   ],
   "author": "Pierre-Louis Mercereqau",
   "homepage": "https://github.com/plmercereau/chat-dbt",
