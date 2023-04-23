@@ -1,7 +1,12 @@
 # Roadmap
 
--   Complete the readme file
--   Keep the modifications of the edited SQL query in the history
+-   Complete the readme file:
+    -   explaination
+    -   limitations
+        -   security
+        -   access to DB data
+        -   other databases
+        -   Link to roadmap, and contribute
 
 ## To be planned
 
@@ -14,6 +19,7 @@
     -   Editable SQL query after an error
     -   Editable prompt query after an error
 -   Use the npm package as a library
+-   Keep the modifications of the edited SQL query in the history
 -   Statistics e.g. time per request, tokens used, etc
 -   Dark/light mode toggle
 -   Add CI tests for both the CLI and the web interface
