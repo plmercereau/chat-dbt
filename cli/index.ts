@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { createOption } from '@commander-js/extra-typings'
 
-import { HISTORY_MODES, OUTPUT_STREAMS, RESULT_FORMATS } from '@/shared'
+import { HISTORY_MODES, OUTPUT_STREAMS, RESULT_FORMATS } from '@/shared/options'
 
 import { startCLI } from './cli'
 import { envProgram } from './env'

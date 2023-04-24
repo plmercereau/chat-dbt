@@ -1,4 +1,5 @@
-import { GptSqlResponse, HistoryMode } from '@/shared'
+import { GptSqlResponse } from '@/shared/chat-gpt'
+import { HistoryMode } from '@/shared/options'
 
 export const fetcher = async ({
     query,

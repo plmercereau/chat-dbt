@@ -1,7 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { getOptions, getSecrets } from '@/utils'
-import { GptSqlResponse, runQuery, initOpenAI, HistoryMode } from '@/shared'
+import { GptSqlResponse, runQuery } from '@/shared/chat-gpt'
+import { initOpenAI } from '@/shared/openai'
+import { HistoryMode } from '@/shared/options'
 
 const { key, org, database } = getSecrets()
 const { model } = getOptions()

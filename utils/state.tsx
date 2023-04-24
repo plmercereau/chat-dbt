@@ -6,7 +6,7 @@ import {
     useContext,
     useState
 } from 'react'
-import { GptSqlResponse } from '@/shared'
+import { GptSqlResponse } from '@/shared/chat-gpt'
 
 export type AppContextType = {
     history: GptSqlResponse[]

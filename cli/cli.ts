@@ -7,16 +7,15 @@ import readline from 'readline'
 import table from 'tty-table'
 
 import {
-    OutputStream,
-    ResultFormat,
-    ERROR_PROMPT,
-    getIntrospection,
-    initOpenAI,
     GptSqlResponse,
     GptSqlResultItem,
     getSqlQuery,
     runSqlQuery
-} from '@/shared'
+} from '@/shared/chat-gpt'
+import { ERROR_PROMPT } from '@/shared/error'
+import { getIntrospection } from '@/shared/introspection'
+import { initOpenAI } from '@/shared/openai'
+import { ResultFormat, OutputStream } from '@/shared/options'
 
 import { CommonOptions } from './index'
 import InputHistoryPrompt from './input-history'

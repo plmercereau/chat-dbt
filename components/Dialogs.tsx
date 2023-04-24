@@ -5,7 +5,7 @@ import { PropsWithChildren } from 'react'
 import { Error } from '@/components/Error'
 import { Result } from '@/components/Result'
 import { SqlQuery } from '@/components/SqlQuery'
-import { GptSqlResponse } from '@/shared'
+import { GptSqlResponse } from '@/shared/chat-gpt'
 import { useStyles } from '@/utils'
 
 export const Dialog: React.FC<PropsWithChildren<{ className: string }>> = ({
