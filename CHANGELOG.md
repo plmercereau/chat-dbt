@@ -1,5 +1,16 @@
 # chat-dbt
 
+## 0.3.0
+
+### Minor Changes
+
+- 12ec57e: improve history modes
+- 12ec57e: add information about tokens used
+
+### Patch Changes
+
+- 43f4731: correct html page title
+
 ## 0.2.1
 
 ### Patch Changes
