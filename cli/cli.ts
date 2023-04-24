@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import inquirer from 'inquirer'
 import { Configuration, OpenAIApi } from 'openai'
-import ora, { Ora } from 'ora'
+import ora from 'ora'
 import table from 'tty-table'
 
 import {
@@ -10,11 +10,11 @@ import {
     getSqlQuery,
     runSqlQuery
 } from '@/shared/chat-gpt'
-import { getErrorPrompt } from '@/shared/error'
+import { ERROR_PROMPT } from '@/shared/error'
 import { getIntrospection } from '@/shared/introspection'
 
-import InputHistoryPrompt from './input-history'
 import { CommonOptions } from './index'
+import InputHistoryPrompt from './input-history'
 import { editFile } from './utils'
 
 type YesNo = 'yes' | 'no'
@@ -26,7 +26,11 @@ export const startCLI = async (options: CommonOptions) => {
     const openai = new OpenAIApi(
         new Configuration({ apiKey: key, organization: org })
     )
-    const history: string[] = []
+    const history: GptSqlResponse[] = []
+    // * The history of queries is not calculated from the full his
+    // * as the history may not be saved between queries when using
+    // * the option --history=queries or --history=none
+    const promptHistory: string[] = []
 
     while (true) {
         const { query } = await inquirer.prompt([
@@ -35,13 +39,14 @@ export const startCLI = async (options: CommonOptions) => {
                 name: 'query',
                 message: 'Describe your query',
                 validate: value => !!value || 'Query cannot be empty',
-                history
+                history: promptHistory
             }
         ])
-        history.push(query)
+        promptHistory.push(query)
         await executeQueryAndShowResult({
             openai,
             query,
+            history,
             ...options
         })
     }
@@ -89,30 +94,32 @@ const printResult = async (result: GptSqlResultItem[], format: string) => {
 
 const executeQueryAndShowResult = async ({
     query,
-    context = [],
+    history = [],
     ...options
 }: CommonOptions & {
     /** @example Number of users who have a first name starting with 'A' */
     query: string
     openai: OpenAIApi
-    context?: GptSqlResponse[]
+    history?: GptSqlResponse[]
 }) => {
-    const { openai, database, format, keepContext, model } = options
     const spinner = ora()
     spinner.start()
     let sqlQuery: string = ''
     try {
         if (!sqlQuery) {
             spinner.text = 'Getting SQL introspection...'
-            const introspection = await getIntrospection(database)
-            spinner.text = 'Calling OpenAI...'
-            sqlQuery = await getSqlQuery({
+            const introspection = await getIntrospection(options.database)
+            spinner.text = 'Calling OpenAI... '
+            const result = await getSqlQuery({
                 query,
-                context,
-                openai,
-                model,
+                history,
+                historyMode: options.historyMode,
+                openai: options.openai,
+                model: options.model,
                 introspection
             })
+            sqlQuery = result.sqlQuery
+            console.log(`${result.usage?.total_tokens} tokens used`)
             if (options.confirm) {
                 // * Ask the user's confirmation before executing the SQL query
                 spinner.stop()
@@ -156,20 +163,22 @@ const executeQueryAndShowResult = async ({
             }
         }
         spinner.text = 'Running query...'
-        const result = await runSqlQuery({ sqlQuery, database })
+        const result = await runSqlQuery({
+            sqlQuery,
+            database: options.database
+        })
         spinner.stop()
         if (!options.confirm) {
             // * Print the SQL query, but only if it's not already printed
             console.log(chalk.dim(sqlQuery))
         }
         spinner.succeed('Success')
-
-        if (keepContext) {
-            context.push({ query, sqlQuery, result })
+        if (options.historyMode === 'none') {
+            history.length = 0
         } else {
-            context.length = 0
+            history.push({ query, sqlQuery, result })
         }
-        printResult(result, format)
+        printResult(result, options.format)
     } catch (e) {
         const error = e as Error
         spinner.stop()
@@ -205,16 +214,19 @@ const executeQueryAndShowResult = async ({
             ])
             retry = prompt.retry
         }
+        if (
+            (retry !== 'no' && sqlQuery !== '') ||
+            options.historyMode !== 'none'
+        ) {
+            history.push({
+                query,
+                sqlQuery,
+                result: undefined,
+                error: error.message
+            })
+        }
         if (retry !== 'no') {
-            if (sqlQuery !== '') {
-                context.push({
-                    query,
-                    sqlQuery,
-                    result: undefined,
-                    error: error.message
-                })
-            }
-            query = getErrorPrompt(error.message)
+            query = ERROR_PROMPT
             if (retry === 'editPrompt') {
                 query = await editFile({ contents: query })
             }
@@ -225,11 +237,14 @@ const executeQueryAndShowResult = async ({
                 })
                 try {
                     spinner.start()
-                    const result = await runSqlQuery({ sqlQuery, database })
+                    const result = await runSqlQuery({
+                        sqlQuery,
+                        database: options.database
+                    })
                     spinner.stop()
                     console.log(chalk.dim(sqlQuery))
                     spinner.succeed('Success')
-                    printResult(result, format)
+                    printResult(result, options.format)
                 } finally {
                     return
                 }
@@ -237,7 +252,7 @@ const executeQueryAndShowResult = async ({
             console.log(chalk.blue('!'), 'Retrying with:', chalk.bold(query))
             await executeQueryAndShowResult({
                 query,
-                context,
+                history,
                 ...options
             })
         }

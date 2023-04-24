@@ -16,6 +16,6 @@ export default {
         model: 'gpt-4',
         confirm: false,
         autoCorrect: 0,
-        keepContext: false
+        historyMode: 'all'
     }
 }

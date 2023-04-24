@@ -2,13 +2,15 @@ import { GptSqlResponse } from '@/shared/chat-gpt'
 
 export const fetcher = async ({
     query,
-    context
+    history,
+    historyMode
 }: {
     query: string
-    context?: GptSqlResponse[]
+    history?: GptSqlResponse[]
+    historyMode?: string
 }): Promise<GptSqlResponse> => {
     const response = await fetch('/api/gpt-sql-query', {
-        body: JSON.stringify({ query, context }),
+        body: JSON.stringify({ query, history, historyMode }),
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
     })

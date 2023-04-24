@@ -1,2 +1,1 @@
-export const getErrorPrompt = (error: string) =>
-    `The query failed with the error: ${error}. Try again.`
+export const ERROR_PROMPT = 'Solve the error and try again'

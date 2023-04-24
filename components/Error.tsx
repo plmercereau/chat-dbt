@@ -2,7 +2,7 @@ import { Button, Container, Group, Title } from '@mantine/core'
 import { IconRefresh } from '@tabler/icons-react'
 import { Fragment, MouseEventHandler } from 'react'
 
-import { getErrorPrompt } from '@/shared/error'
+import { ERROR_PROMPT } from '@/shared/error'
 import { fetcher } from '@/utils/fetch'
 import { useAppContext } from '@/utils/state'
 
@@ -17,18 +17,18 @@ export const Error: React.FC<{
 
     const askCorrection: MouseEventHandler<HTMLButtonElement> = async () => {
         setLoading(true)
-        const query = getErrorPrompt(error)
+        const query = ERROR_PROMPT
         const currentHistory = [...history]
         setHistory([...currentHistory, { query }])
 
         // * Get number of errors after the last successful query + 1 (index starts at 0)
-        const contextSize =
+        const historySize =
             currentHistory.reverse().findIndex(m => !m.error) + 1
 
         const result = await fetcher({
             query,
             // * Get all the queries after the last successful query
-            context: currentHistory.slice(-contextSize)
+            history: currentHistory.slice(-historySize)
         })
         setLoading(false) // TODO this does not re-focus the input
         setHistory([...currentHistory, result])

@@ -1,4 +1,8 @@
-import { ChatCompletionRequestMessage, OpenAIApi } from 'openai'
+import {
+    ChatCompletionRequestMessage,
+    CreateCompletionResponseUsage,
+    OpenAIApi
+} from 'openai'
 import { ColumnList, Row, RowList } from 'postgres'
 
 import { Instrospection, getIntrospection } from './introspection'
@@ -15,9 +19,14 @@ export type GptSqlResponse = {
     sqlQuery?: string
     result?: GptSqlResultItem[]
     error?: string
+    usage?: CreateCompletionResponseUsage
 }
 
-export type MessageOptions = { query: string; context?: GptSqlResponse[] } & (
+export type MessageOptions = {
+    query: string
+    history?: GptSqlResponse[]
+    historyMode: string
+} & (
     | {
           database: string
       }
@@ -28,7 +37,8 @@ export type MessageOptions = { query: string; context?: GptSqlResponse[] } & (
 
 export const createMessages = async ({
     query,
-    context,
+    history,
+    historyMode,
     ...variant
 }: MessageOptions): Promise<ChatCompletionRequestMessage[]> => {
     // * Get the SQL introspection
@@ -62,9 +72,23 @@ export const createMessages = async ({
     ]
 
     // * Add all previous queries
-    context?.forEach(entry => {
+    history?.forEach(entry => {
         messages.push({ role: 'user', content: entry.query })
         messages.push({ role: 'assistant', content: entry.sqlQuery! })
+        if (historyMode === 'all' && entry.result) {
+            messages.push({
+                role: 'system',
+                content: `the result of the query is: ${JSON.stringify(
+                    entry.result
+                )}`
+            })
+        }
+        if (entry.error) {
+            messages.push({
+                role: 'system',
+                content: `the query failed with error: ${entry.error}`
+            })
+        }
     })
 
     // * Add the query
@@ -83,7 +107,7 @@ export const getSqlQuery = async ({
 }: MessageOptions & {
     openai: OpenAIApi
     model: string
-}): Promise<string> => {
+}): Promise<{ sqlQuery: string; usage?: CreateCompletionResponseUsage }> => {
     // * Query OpenAI
     const completion = await openai.createChatCompletion({
         model,
@@ -94,7 +118,7 @@ export const getSqlQuery = async ({
     if (!sqlQuery) {
         throw new Error('empty response')
     }
-    return sqlQuery
+    return { sqlQuery, usage: completion.data.usage }
 }
 
 export const runSqlQuery = async (options: {
@@ -126,21 +150,23 @@ export const runQuery = async (options: {
     /** @example Number of users who have a first name starting with 'A' */
     query: string
     database: string
-    context?: GptSqlResponse[]
+    history?: GptSqlResponse[]
+    historyMode: string
 }): Promise<GptSqlResponse> => {
     const { query, database } = options
     try {
-        const sqlQuery = await getSqlQuery(options)
+        const { sqlQuery, usage } = await getSqlQuery(options)
         try {
             const result = await runSqlQuery({ sqlQuery, database })
             return {
                 query,
                 sqlQuery,
-                result
+                result,
+                usage
             }
         } catch (e) {
             const error = e as Error
-            return { query, sqlQuery, error: error.message }
+            return { query, sqlQuery, error: error.message, usage }
         }
     } catch (e) {
         const error = e as Error

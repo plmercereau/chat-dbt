@@ -93,9 +93,15 @@ Each attempt is iterative and builds upon the previous ones, so OpenAI is suppos
 chat-dbt --auto-correct 3
 ```
 
-<!-- ### Keep context between queries -->
+### Skip history between queries
 
-<!-- TODO -->
+By default, Chat-DBT keeps the history of the previous exchanges with the new prompt sent to OpenAI.It gives more context to OpenAI and allows queries using previous results. On the other hand, it uses more tokens and is therefore more costly. You can either disable the history with the `--history-mode=none` option, or only keep the previous queries without sending their database result with the `--history-mode=queries` option.
+
+```sh
+chat-dbt --history-mode=[all|none|queries]
+```
+
+Please note that the previous query will however always be sent when you asked to retry a query that failed.
 
 ### Change the format of the result
 

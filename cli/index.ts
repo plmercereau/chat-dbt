@@ -43,9 +43,11 @@ const program = envProgram
     )
     .addOption(
         new Option(
-            '-k, --keep-context',
-            'keep context between queries'
-        ).default(false)
+            '-t, --history-mode <choice>',
+            'part of the previous queries to keep in the context: all, none, or only the queries without their results'
+        )
+            .choices(['all', 'none', 'queries'])
+            .default('all')
     )
     .addOption(
         new Option('-f, --format <format>', 'format of the result')
