@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-import { Option } from '@commander-js/extra-typings'
+import { createOption } from '@commander-js/extra-typings'
+
+import { HISTORY_MODES, OUTPUT_STREAMS, RESULT_FORMATS } from '@/shared'
 
 import { startCLI } from './cli'
 import { envProgram } from './env'
@@ -9,7 +11,7 @@ import { startWeb } from './web'
 const program = envProgram
     .name('chat-dbt')
     .addOption(
-        new Option(
+        createOption(
             '-d, --database <connection-string>',
             'database connection string, for instance "postgres://user:password@localhost:5432/postgres"'
         )
@@ -17,42 +19,65 @@ const program = envProgram
             .makeOptionMandatory(true)
     )
     .addOption(
-        new Option('--key <key>', 'OpenAI key')
+        createOption('--key <key>', 'OpenAI key')
             .env('OPENAI_API_KEY')
             .makeOptionMandatory(true)
     )
     .addOption(
-        new Option('--org <org>', 'OpenAI organization').env(
+        createOption('--org <org>', 'OpenAI organization').env(
             'OPENAI_ORGANIZATION'
         )
     )
     .addOption(
-        new Option('-m, --model <model>', 'model to use').default('gpt-4')
+        createOption('-m, --model <model>', 'model to use').default('gpt-4')
     )
     .addOption(
-        new Option(
+        createOption(
             '-c, --confirm',
             'ask confirmation before running the SQL query'
         ).default(false)
     )
     .addOption(
-        new Option(
+        createOption(
             '-a, --auto-correct <number>',
             'number of calls to OpenAI for correcting an error in the SQL query'
-        ).argParser(parseInteger)
+        )
+            .default(0)
+            .argParser(parseInteger)
     )
     .addOption(
-        new Option(
+        createOption(
             '-t, --history-mode <choice>',
             'part of the previous queries to keep in the context: all, none, or only the queries without their results'
         )
-            .choices(['all', 'none', 'queries'])
-            .default('all')
+            .choices(HISTORY_MODES)
+            .default('all' as const)
     )
     .addOption(
-        new Option('-f, --format <format>', 'format of the result')
-            .choices(['table', 'json'])
-            .default('table')
+        createOption('-f, --format <format>', 'format of the result')
+            .choices(RESULT_FORMATS)
+            .default('table' as const)
+    )
+    .addOption(
+        createOption('--output-sql <output>', 'output stream for the SQL query')
+            .choices(OUTPUT_STREAMS)
+            .default('stdout' as const)
+    )
+    .addOption(
+        createOption(
+            '--output-result <output>',
+            'output stream for the SQL result'
+        )
+            .choices(OUTPUT_STREAMS)
+            .default('stdout' as const)
+    )
+    .addOption(
+        createOption(
+            '--output-info <output>',
+            'output stream for information messages'
+        )
+            .choices(OUTPUT_STREAMS)
+            .default('stderr' as const)
     )
 
 export type CommonOptions = ReturnType<typeof program.opts>
@@ -78,8 +103,8 @@ const web = program
 
 export type WebOptions = CommonOptions & ReturnType<typeof web.opts>
 
-program.action(async options => {
-    await startCLI({ ...program.opts(), ...options })
+program.action(options => {
+    return startCLI({ ...program.opts(), ...options })
 })
 
 program.parse()

@@ -9,9 +9,8 @@ import {
 import { Prism } from '@mantine/prism'
 import { Fragment, PropsWithChildren, useState } from 'react'
 
-import { useStyles } from '@/utils/styles'
-import { getOptions } from '@/utils/options'
-import { GptSqlResultItem } from '@/shared/chat-gpt'
+import { useStyles, getOptions } from '@/utils'
+import { GptSqlResultItem } from '@/shared'
 
 const options = getOptions()
 
@@ -124,7 +123,9 @@ const ItemResult: React.FC<{
                     <SegmentedControl
                         radius='sm'
                         value={format}
-                        onChange={setFormat}
+                        onChange={(v: (typeof options)['format']) =>
+                            setFormat(v)
+                        }
                         data={[
                             { label: 'Table', value: 'table' },
                             { label: 'JSON', value: 'json' }
@@ -133,8 +134,9 @@ const ItemResult: React.FC<{
                 </Group>
             )}
             <div className={classes.flex}>
-                {format === 'json' && <JsonResult {...item} />}
-                {format === 'table' && <TableResult {...item} />}
+                {(format === 'json' && <JsonResult {...item} />) || (
+                    <TableResult {...item} />
+                )}
             </div>
         </ResultContainer>
     )

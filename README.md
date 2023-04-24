@@ -103,6 +103,8 @@ chat-dbt --history-mode=[all|none|queries]
 
 Please note that the previous query will however always be sent when you asked to retry a query that failed.
 
+<!-- TODO explain a bit further why this feature is powerful, but why it costs an arm -->
+
 ### Change the format of the result
 
 By default, Chat-DBT renders the results as a table. To obtain the results in JSON format, pass the following option:
@@ -110,6 +112,8 @@ By default, Chat-DBT renders the results as a table. To obtain the results in JS
 ```sh
 chat-dbt --format json
 ```
+
+<!-- TODO IO streams -->
 
 ## Development
 

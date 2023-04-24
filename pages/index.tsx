@@ -10,10 +10,7 @@ import { IconSend } from '@tabler/icons-react'
 import { Fragment, useState } from 'react'
 
 import { LeftDialog, QueryDialog, ResponseDialog } from '@/components/Dialogs'
-import { fetcher } from '@/utils/fetch'
-import { getOptions } from '@/utils/options'
-import { useAppContext } from '@/utils/state'
-import { useStyles } from '@/utils/styles'
+import { fetcher, getOptions, useAppContext, useStyles } from '@/utils'
 
 const options = getOptions()
 

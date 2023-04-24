@@ -1,14 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Configuration, OpenAIApi } from 'openai'
 
-import { GptSqlResponse, runQuery } from '@/shared/chat-gpt'
-import { getOptions, getSecrets } from '@/utils/options'
+import { getOptions, getSecrets } from '@/utils'
+import { GptSqlResponse, runQuery, initOpenAI, HistoryMode } from '@/shared'
 
 const { key, org, database } = getSecrets()
 const { model } = getOptions()
-const openai = new OpenAIApi(
-    new Configuration({ apiKey: key, organization: org })
-)
+const openai = initOpenAI(key, org)
 
 export default async function handler(
     req: NextApiRequest,
@@ -18,7 +15,7 @@ export default async function handler(
     const { query, history, historyMode } = req.body as {
         query?: string
         history?: GptSqlResponse[]
-        historyMode: string
+        historyMode: HistoryMode
     }
     if (!query) {
         return res.status(400).json({ error: 'no request', query: '' })

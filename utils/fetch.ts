@@ -1,4 +1,4 @@
-import { GptSqlResponse } from '@/shared/chat-gpt'
+import { GptSqlResponse, HistoryMode } from '@/shared'
 
 export const fetcher = async ({
     query,
@@ -7,7 +7,7 @@ export const fetcher = async ({
 }: {
     query: string
     history?: GptSqlResponse[]
-    historyMode?: string
+    historyMode?: HistoryMode
 }): Promise<GptSqlResponse> => {
     const response = await fetch('/api/gpt-sql-query', {
         body: JSON.stringify({ query, history, historyMode }),

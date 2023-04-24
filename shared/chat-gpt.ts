@@ -6,6 +6,7 @@ import {
 import { ColumnList, Row, RowList } from 'postgres'
 
 import { Instrospection, getIntrospection } from './introspection'
+import { HistoryMode } from './options'
 import { getSqlConnection } from './sql-connection'
 
 export type GptSqlResultItem = {
@@ -25,7 +26,7 @@ export type GptSqlResponse = {
 export type MessageOptions = {
     query: string
     history?: GptSqlResponse[]
-    historyMode: string
+    historyMode: HistoryMode
 } & (
     | {
           database: string
@@ -151,7 +152,7 @@ export const runQuery = async (options: {
     query: string
     database: string
     history?: GptSqlResponse[]
-    historyMode: string
+    historyMode: HistoryMode
 }): Promise<GptSqlResponse> => {
     const { query, database } = options
     try {

@@ -2,9 +2,8 @@ import { Button, Container, Group, Title } from '@mantine/core'
 import { IconRefresh } from '@tabler/icons-react'
 import { Fragment, MouseEventHandler } from 'react'
 
-import { ERROR_PROMPT } from '@/shared/error'
-import { fetcher } from '@/utils/fetch'
-import { useAppContext } from '@/utils/state'
+import { ERROR_PROMPT } from '@/shared'
+import { fetcher, useAppContext } from '@/utils'
 
 export const Error: React.FC<{
     error?: string

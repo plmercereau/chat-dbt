@@ -2,7 +2,7 @@ import { Badge, Title } from '@mantine/core'
 import { Prism } from '@mantine/prism'
 import { Fragment } from 'react'
 
-import { useStyles } from '@/utils/styles'
+import { useStyles } from '@/utils'
 import { CreateCompletionResponseUsage } from 'openai'
 
 export const SqlQuery: React.FC<{

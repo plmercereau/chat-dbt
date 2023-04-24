@@ -43,6 +43,7 @@
     "@mantine/next": "^6.0.8",
     "chalk": "^5.2.0",
     "commander": "^10.0.1",
+    "csv-stringify": "^6.3.2",
     "dotenv": "^16.0.3",
     "inquirer": "^9.1.5",
     "next": "13.3.0",
