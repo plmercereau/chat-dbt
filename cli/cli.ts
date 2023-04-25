@@ -1,26 +1,19 @@
 import chalk from 'chalk'
-import { stringify } from 'csv-stringify/sync'
 import inquirer from 'inquirer'
 import { OpenAIApi } from 'openai'
 import ora from 'ora'
 import readline from 'readline'
-import table from 'tty-table'
 
-import {
-    GptSqlResponse,
-    GptSqlResultItem,
-    getSqlQuery,
-    runSqlQuery
-} from '@/shared/chat-gpt'
+import { GptSqlResponse, getSqlQuery } from '@/shared/chat-gpt'
 import { ERROR_PROMPT } from '@/shared/error'
 import { getIntrospection } from '@/shared/introspection'
 import { initOpenAI } from '@/shared/openai'
-import { ResultFormat, OutputStream } from '@/shared/options'
 
 import { CommonOptions } from './index'
 import InputHistoryPrompt from './input-history'
 import { editFile } from './utils'
-
+import { println } from './output'
+import { runSqlQuery } from './sql'
 type YesNo = 'yes' | 'no'
 
 inquirer.registerPrompt('input-history', InputHistoryPrompt)
@@ -70,73 +63,7 @@ export const startCLI = async (options: CommonOptions) => {
     }
 }
 
-const printResult = async (
-    result: GptSqlResultItem[],
-    format: ResultFormat,
-    output: OutputStream
-) => {
-    switch (format) {
-        case 'table':
-            result.forEach(item => {
-                if (item.count === null) {
-                    // * Success, no data
-                    return
-                }
-                if (item.columns) {
-                    // * Data is expected e.g. SELECT statement
-                    const t = table(
-                        item.columns.map(col => ({ value: col.name })),
-                        item.rows,
-                        { defaultValue: '' }
-                    )
-                    println(t.render(), output)
-                } else {
-                    // * No data is expected e.g. INSERT statement with no RETURNING clause
-                    const t = table(
-                        [{ value: 'count' }],
-                        [{ count: item.count }]
-                    )
-                    println(t.render(), output)
-                }
-            })
-            break
-        case 'json':
-            println(
-                JSON.stringify(
-                    result.map(({ count, rows, columns }) =>
-                        columns ? rows : count === null ? true : count
-                    ),
-                    null,
-                    2
-                ),
-                output
-            )
-            break
-        case 'csv':
-            result.forEach(({ count, rows, columns }) => {
-                println(
-                    stringify(
-                        columns
-                            ? rows
-                            : count === null
-                            ? [{ success: true }]
-                            : [{ count }],
-                        { header: true }
-                    ),
-                    output
-                )
-            })
-            break
-    }
-}
-const println = (message: string, output: OutputStream) => {
-    if (output === 'none') {
-        return
-    }
-    output === 'stdout' ? console.log(message) : console.error(message)
-}
-
-export const executeQueryAndShowResult = async ({
+const executeQueryAndShowResult = async ({
     query,
     history = [],
     ...options
@@ -227,7 +154,7 @@ export const executeQueryAndShowResult = async ({
         } else {
             history.push({ query, sqlQuery, result })
         }
-        printResult(result, options.format, options.outputResult)
+        println(result.toString(options.format), options.outputResult)
     } catch (e) {
         const error = e as Error
         spinner.stop()
@@ -299,7 +226,10 @@ export const executeQueryAndShowResult = async ({
                     spinner.stop()
                     println(chalk.dim(sqlQuery), options.outputSql)
                     spinner.succeed('Success')
-                    printResult(result, options.format, options.outputResult)
+                    println(
+                        result.toString(options.format),
+                        options.outputResult
+                    )
                 } finally {
                     return
                 }

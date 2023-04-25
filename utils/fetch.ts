@@ -1,7 +1,8 @@
 import { GptSqlResponse } from '@/shared/chat-gpt'
 import { HistoryMode } from '@/shared/options'
+import { Result } from '@/shared/result'
 
-export const fetcher = async ({
+export const resultFetcher = async ({
     query,
     history,
     historyMode
@@ -15,5 +16,9 @@ export const fetcher = async ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
     })
-    return response.json()
+    const serializedResult = await response.json()
+    return {
+        ...serializedResult,
+        result: new Result(serializedResult.result)
+    }
 }

@@ -3,17 +3,13 @@ import { IconRefresh } from '@tabler/icons-react'
 import { Fragment, MouseEventHandler } from 'react'
 
 import { ERROR_PROMPT } from '@/shared/error'
-import { fetcher, useAppContext } from '@/utils'
+import { resultFetcher, useAppContext } from '@/utils'
 
 export const Error: React.FC<{
-    error?: string
+    error: string
     active: boolean
 }> = ({ error, active }) => {
     const { history, setHistory, loading, setLoading } = useAppContext()
-    if (!error) {
-        return null
-    }
-
     const askCorrection: MouseEventHandler<HTMLButtonElement> = async () => {
         setLoading(true)
         const query = ERROR_PROMPT
@@ -24,7 +20,7 @@ export const Error: React.FC<{
         const historySize =
             currentHistory.reverse().findIndex(m => !m.error) + 1
 
-        const result = await fetcher({
+        const result = await resultFetcher({
             query,
             // * Get all the queries after the last successful query
             history: currentHistory.slice(-historySize)
