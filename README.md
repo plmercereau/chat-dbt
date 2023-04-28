@@ -31,13 +31,17 @@ https://user-images.githubusercontent.com/24897252/233865764-2a8c4716-f052-47f5-
 
 ### Adapting context between queries
 
-By default, Chat-DBT keeps the history of the previous exchanges with the new prompt sent to OpenAI.It gives more context to OpenAI and allows queries using previous results. On the other hand, it uses more tokens and is, therefore, more costly. You can either disable the history with the `--history-mode=none` option, or only keep the previous queries without sending their database result with the `--history-mode=queries` option.
+By default, Chat-DBT keeps a history of previous exchanges with OpenAI. Although this feature provides more context to OpenAI and enables queries using previous results, it uses more tokens and is therefore more costly. If you plan to extract a significant amount of data to send back to OpenAI, you may reach the token limit quickly. Here's an example of how context can be reused between queries:
+
+https://user-images.githubusercontent.com/24897252/235167307-8d5fe81e-567a-43be-8300-852930ce9238.mp4
+
+You can either disable the history with the `--history-mode=none` option, or only keep the previous queries without sending their database result with the `--history-mode=queries` option. Please note that the previous query will however always be sent when you asked to retry a query that failed.
 
 ```sh
 chat-dbt --history-mode=[all|none|queries]
 ```
 
-Please note that the previous query will however always be sent when you asked to retry a query that failed.
+
 
 <!-- TODO explain a bit further why this feature is powerful, but why it costs an arm -->
 
