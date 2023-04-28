@@ -1,5 +1,17 @@
 # chat-dbt
 
+## 0.4.0
+
+### Minor Changes
+
+- ef37622: select output streams for sql query, results and information: stdout, stderr, or none
+- ef37622: output to csv
+- ef37622: execute query from stdin
+
+### Patch Changes
+
+- 9b60830: improve the handling of errors
+
 ## 0.3.0
 
 ### Minor Changes
