@@ -32,7 +32,7 @@ export class CLIResult extends Result<CLIResultItem> {
             case 'table':
                 return this.toTable()
             default:
-                return super.toString()
+                return super.toString(format)
         }
     }
 }

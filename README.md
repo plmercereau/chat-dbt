@@ -41,8 +41,6 @@ You can either disable the history with the `--history-mode=none` option, or onl
 chat-dbt --history-mode=[all|none|queries]
 ```
 
-
-
 <!-- TODO explain a bit further why this feature is powerful, but why it costs an arm -->
 
 ### Handling of errors
@@ -62,6 +60,26 @@ chat-dbt --auto-correct 3
 ```
 
 ### Working with input and output files
+
+You can use a file as a source of a batch of instructions, that you can pipe through chat-dbt, for instance, given the following `instructions.txt` file:
+
+```sh
+list authors
+add a famous author from the 20th century
+list authors
+```
+
+You can then execute the instructions with:
+
+```sh
+cat instructions.txt | chat-dbt
+```
+
+It is also possible to define which part of the output would be redirected to stderr, stdout, or nowhere, with the `--output-sql`, `--output-result` and `--output-info` options. For instance, the following instruction will output the SQL query to `stderr`, and the SQL result into `authors.csv`:
+
+```sh
+echo "list authors" | chat-dbt --output-sql stderr --output-result stdout --output-info none --format csv > authors.csv
+```
 
 ### Environment variables
 
