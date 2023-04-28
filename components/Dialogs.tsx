@@ -55,7 +55,7 @@ export const ResponseDialog: React.FC<{
     return (
         <LeftDialog>
             <SqlQuery query={message.sqlQuery} usage={message.usage} />
-            {message.error && <Error error={message.error} active={last} />}
+            {message.error && <Error message={message} active={last} />}
             {message.result && <Result result={message.result} />}
         </LeftDialog>
     )

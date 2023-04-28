@@ -66,31 +66,32 @@ const createMessages = async ({
     ]
 
     // * Add all previous queries
-    history?.forEach(entry => {
-        messages.push({ role: 'user', content: entry.query })
-        messages.push({ role: 'assistant', content: entry.sqlQuery! })
-        if (historyMode === 'all' && entry.result) {
-            messages.push({
-                role: 'system',
-                content: `the result of the query is: ${JSON.stringify(
-                    entry.result
-                )}`
-            })
-        }
-        if (entry.error) {
-            messages.push({
-                role: 'system',
-                content: `the query failed with error: ${entry.error}`
-            })
-        }
-    })
+    history
+        ?.filter(entry => !!entry.sqlQuery)
+        .forEach(entry => {
+            messages.push({ role: 'user', content: entry.query })
+            messages.push({ role: 'assistant', content: entry.sqlQuery! })
+            if (historyMode === 'all' && entry.result) {
+                messages.push({
+                    role: 'system',
+                    content: `the result of the query is: ${JSON.stringify(
+                        entry.result
+                    )}`
+                })
+            }
+            if (entry.error) {
+                messages.push({
+                    role: 'system',
+                    content: `the query failed with error: ${entry.error}`
+                })
+            }
+        })
 
     // * Add the query
     messages.push({
         role: 'user',
         content: query
     })
-
     return messages
 }
 

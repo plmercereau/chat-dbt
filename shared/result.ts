@@ -41,6 +41,9 @@ export class Result<T extends ResultItem = ResultItem> {
             ...args: ConstructorParameters<typeof ResultItem>
         ) => T = ResultItem as any
     ) {
+        if (typeof rawResult !== 'object') {
+            console.warn('???', rawResult)
+        }
         if ('rows' in rawResult) {
             // * deserialize
             this.rawData = rawResult.rows as RowList<Row[]>

@@ -19,6 +19,6 @@ export const resultFetcher = async ({
     const serializedResult = await response.json()
     return {
         ...serializedResult,
-        result: new Result(serializedResult.result)
+        result: serializedResult.result && new Result(serializedResult.result)
     }
 }
