@@ -10,10 +10,7 @@ import { IconSend } from '@tabler/icons-react'
 import { Fragment, useState } from 'react'
 
 import { LeftDialog, QueryDialog, ResponseDialog } from '@/components/Dialogs'
-import { fetcher } from '@/utils/fetch'
-import { getOptions } from '@/utils/options'
-import { useAppContext } from '@/utils/state'
-import { useStyles } from '@/utils/styles'
+import { resultFetcher, getOptions, useAppContext, useStyles } from '@/utils'
 
 const options = getOptions()
 
@@ -42,7 +39,7 @@ const Page: React.FC = () => {
         setLoading(true)
         const currentHistory = [...history]
         setHistory([...currentHistory, { query }])
-        const result = await fetcher({
+        const result = await resultFetcher({
             query,
             historyMode: options.historyMode,
             history: options.historyMode === 'none' ? undefined : currentHistory

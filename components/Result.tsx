@@ -9,28 +9,23 @@ import {
 import { Prism } from '@mantine/prism'
 import { Fragment, PropsWithChildren, useState } from 'react'
 
-import { useStyles } from '@/utils/styles'
-import { getOptions } from '@/utils/options'
-import { GptSqlResultItem } from '@/shared/chat-gpt'
+import { ResultItem, Result as ResultType } from '@/shared/result'
+import { useStyles, getOptions } from '@/utils'
 
 const options = getOptions()
 
-const JsonResult: React.FC<GptSqlResultItem> = ({ count, rows, columns }) => {
+const JsonResult: React.FC<{ item: ResultItem }> = ({ item }) => {
     const {
         classes: { code }
     } = useStyles()
     return (
         <Prism classNames={{ code }} language='json'>
-            {JSON.stringify(
-                columns ? rows : count === null ? true : count,
-                null,
-                2
-            )}
+            {JSON.stringify(item, null, 2)}
         </Prism>
     )
 }
 
-const TableResult: React.FC<GptSqlResultItem> = ({ count, rows, columns }) => {
+const TableResult: React.FC<{ item: ResultItem }> = ({ item }) => {
     const props: TableProps = {
         striped: true,
         highlightOnHover: true,
@@ -38,39 +33,19 @@ const TableResult: React.FC<GptSqlResultItem> = ({ count, rows, columns }) => {
         withColumnBorders: true
     }
 
-    if (count === null) {
-        return <div>Success</div>
-    }
-
-    if (columns === undefined)
-        return (
-            <Table {...props}>
-                <thead>
-                    <tr>
-                        <th>Count</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{count}</td>
-                    </tr>
-                </tbody>
-            </Table>
-        )
-
     return (
         <Table {...props}>
             <thead>
                 <tr>
-                    {columns.map((col, colKey) => (
+                    {item.columns?.map((col, colKey) => (
                         <th key={colKey}>{col.name}</th>
                     ))}
                 </tr>
             </thead>
             <tbody>
-                {rows.map((row, rowKey) => (
+                {item.rows.map((row, rowKey) => (
                     <tr key={rowKey}>
-                        {columns?.map((col, colKey) => (
+                        {item.columns?.map((col, colKey) => (
                             <td key={`${rowKey}-${colKey}`}>{row[col.name]}</td>
                         ))}
                     </tr>
@@ -81,9 +56,12 @@ const TableResult: React.FC<GptSqlResultItem> = ({ count, rows, columns }) => {
 }
 
 const ResultContainer: React.FC<
-    PropsWithChildren<{ index: number; total: number }>
+    PropsWithChildren<{ index?: number; total?: number }>
 > = ({ children, index, total }) => {
-    const title = total > 1 ? `Result ${index + 1}` : 'Result'
+    const title =
+        index !== undefined && total !== undefined && total > 1
+            ? `Result ${index + 1}`
+            : 'Result'
     return (
         <>
             <Title order={4}>{title}</Title>
@@ -91,10 +69,11 @@ const ResultContainer: React.FC<
         </>
     )
 }
+
 const ItemResult: React.FC<{
-    item: GptSqlResultItem
-    index: number
-    total: number
+    item: ResultItem
+    index?: number
+    total?: number
 }> = ({ item, index, total }) => {
     // ? keep the max width of the component
     const [format, setFormat] = useState(options.format)
@@ -124,7 +103,9 @@ const ItemResult: React.FC<{
                     <SegmentedControl
                         radius='sm'
                         value={format}
-                        onChange={setFormat}
+                        onChange={(v: (typeof options)['format']) =>
+                            setFormat(v)
+                        }
                         data={[
                             { label: 'Table', value: 'table' },
                             { label: 'JSON', value: 'json' }
@@ -133,27 +114,25 @@ const ItemResult: React.FC<{
                 </Group>
             )}
             <div className={classes.flex}>
-                {format === 'json' && <JsonResult {...item} />}
-                {format === 'table' && <TableResult {...item} />}
+                {(format === 'json' && <JsonResult item={item} />) || (
+                    <TableResult item={item} />
+                )}
             </div>
         </ResultContainer>
     )
 }
 
 export const Result: React.FC<{
-    result?: GptSqlResultItem[]
-}> = ({ result }) => {
-    if (!result?.length) return null
-    return (
-        <Fragment>
-            {result.map((item, tableKey) => (
-                <ItemResult
-                    key={tableKey}
-                    index={tableKey}
-                    total={result.length}
-                    item={item}
-                />
-            ))}
-        </Fragment>
-    )
-}
+    result: ResultType
+}> = ({ result }) => (
+    <Fragment>
+        {result.data.map((item, tableKey) => (
+            <ItemResult
+                key={tableKey}
+                index={tableKey}
+                total={result.data.length}
+                item={item}
+            />
+        ))}
+    </Fragment>
+)

@@ -1,36 +1,58 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Configuration, OpenAIApi } from 'openai'
 
-import { GptSqlResponse, runQuery } from '@/shared/chat-gpt'
-import { getOptions, getSecrets } from '@/utils/options'
+import { getOptions, getSecrets } from '@/utils'
+import { GptSqlResponse, getSqlQuery } from '@/shared/chat-gpt'
+import { initOpenAI } from '@/shared/openai'
+import { HistoryMode } from '@/shared/options'
+import { getSqlConnection } from '@/shared/sql-connection'
+import { Result } from '@/shared/result'
 
 const { key, org, database } = getSecrets()
 const { model } = getOptions()
-const openai = new OpenAIApi(
-    new Configuration({ apiKey: key, organization: org })
-)
+const openai = initOpenAI(key, org)
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<GptSqlResponse>
+    res: NextApiResponse
 ) {
     // * Get the query
     const { query, history, historyMode } = req.body as {
         query?: string
         history?: GptSqlResponse[]
-        historyMode: string
+        historyMode: HistoryMode
     }
     if (!query) {
         return res.status(400).json({ error: 'no request', query: '' })
     }
-    const response = await runQuery({
-        openai,
-        model,
-        query,
-        database,
-        history,
-        historyMode
-    })
 
-    return res.status(response.error ? 500 : 200).json(response)
+    try {
+        const { sqlQuery, usage } = await getSqlQuery({
+            openai,
+            model,
+            query,
+            database,
+            history,
+            historyMode
+        })
+
+        try {
+            const result = new Result(
+                await getSqlConnection(database).unsafe(sqlQuery)
+            )
+            return res.status(200).json({
+                query,
+                sqlQuery,
+                result: result.serialize(),
+                usage
+            })
+        } catch (e) {
+            const error = e as Error
+            return res
+                .status(500)
+                .json({ query, sqlQuery, error: error.message, usage })
+        }
+    } catch (e) {
+        const error = e as Error
+        return res.status(500).json({ query, error: error.message })
+    }
 }

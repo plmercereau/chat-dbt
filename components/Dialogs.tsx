@@ -6,7 +6,7 @@ import { Error } from '@/components/Error'
 import { Result } from '@/components/Result'
 import { SqlQuery } from '@/components/SqlQuery'
 import { GptSqlResponse } from '@/shared/chat-gpt'
-import { useStyles } from '@/utils/styles'
+import { useStyles } from '@/utils'
 
 export const Dialog: React.FC<PropsWithChildren<{ className: string }>> = ({
     children,
@@ -55,8 +55,8 @@ export const ResponseDialog: React.FC<{
     return (
         <LeftDialog>
             <SqlQuery query={message.sqlQuery} usage={message.usage} />
-            <Error error={message.error} active={last} />
-            <Result result={message.result} />
+            {message.error && <Error message={message} active={last} />}
+            {message.result && <Result result={message.result} />}
         </LeftDialog>
     )
 }

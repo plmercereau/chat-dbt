@@ -1,4 +1,3 @@
-import { GptSqlResponse } from '@/shared/chat-gpt'
 import {
     Dispatch,
     PropsWithChildren,
@@ -7,6 +6,7 @@ import {
     useContext,
     useState
 } from 'react'
+import { GptSqlResponse } from '@/shared/chat-gpt'
 
 export type AppContextType = {
     history: GptSqlResponse[]
