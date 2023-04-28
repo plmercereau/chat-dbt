@@ -1,15 +1,6 @@
 # Roadmap
 
--   Complete the readme file:
-    -   explanation
-    -   limitations
-        -   security
-        -   access to DB data
-        -   other databases
-        -   Link to roadmap, and contribute
-
-## To be planned
-
+-   Complete the readme file
 -   Vitests
 -   Implement the options into the web interface
     -   confirm
@@ -19,6 +10,7 @@
     -   Editable SQL query after an error
     -   Editable prompt query after an error
 -   reset history
+-   persist the history so it can be reused later
 -   Use the npm package as a library
 -   Keep the modifications of the edited SQL query in the history
 -   Dark/light mode toggle
