@@ -1,6 +1,6 @@
 # Chat-DBT
 
-Interact with your database using human-like queries through OpenAI GPT.
+Interact with your database using human queries through OpenAI GPT.
 
 https://user-images.githubusercontent.com/24897252/233864066-2110a65e-3337-40c2-a1e5-3756e21d6ed6.mp4
 
