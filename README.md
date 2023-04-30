@@ -75,10 +75,14 @@ You can then execute the instructions with:
 cat instructions.txt | chat-dbt
 ```
 
-It is also possible to define which part of the output would be redirected to stderr, stdout, or nowhere, with the `--output-sql`, `--output-result` and `--output-info` options. For instance, the following instruction will output the SQL query to `stderr`, and the SQL result into `authors.csv`:
+It is also possible to define which part of the output should be redirected to stderr, stdout, or nowhere, with the `--output-sql`, `--output-result` and `--output-info` options. For instance, the following instruction will output the SQL query to `stderr`, and the SQL result into `authors.csv`:
 
 ```sh
-echo "list authors" | chat-dbt --output-sql stderr --output-result stdout --output-info none --format csv > authors.csv
+echo "list authors" | chat-dbt \
+    --output-sql stderr \
+    --output-result stdout \
+    --output-info none \
+    --format csv > authors.csv
 ```
 
 ### Environment variables
