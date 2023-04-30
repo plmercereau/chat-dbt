@@ -7,6 +7,7 @@ import { startCLI } from './cli'
 import { envProgram } from './env'
 import { parseInteger } from './utils'
 import { startWeb } from './web'
+import { createDatabaseConnection } from '@/shared/connectors'
 
 const program = envProgram
     .name('chat-dbt')
@@ -16,6 +17,7 @@ const program = envProgram
             'database connection string, for instance "postgres://user:password@localhost:5432/postgres"'
         )
             .env('DB_CONNECTION_STRING')
+            .argParser(value => createDatabaseConnection(value))
             .makeOptionMandatory(true)
     )
     .addOption(

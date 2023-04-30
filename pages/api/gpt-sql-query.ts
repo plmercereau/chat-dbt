@@ -4,7 +4,6 @@ import { getOptions, getSecrets } from '@/utils'
 import { GptSqlResponse, getSqlQuery } from '@/shared/chat-gpt'
 import { initOpenAI } from '@/shared/openai'
 import { HistoryMode } from '@/shared/options'
-import { getSqlConnection } from '@/shared/sql-connection'
 import { Result } from '@/shared/result'
 
 const { key, org, database } = getSecrets()
@@ -36,9 +35,7 @@ export default async function handler(
         })
 
         try {
-            const result = new Result(
-                await getSqlConnection(database).unsafe(sqlQuery)
-            )
+            const result = new Result(await database.runSqlQuery(sqlQuery))
             return res.status(200).json({
                 query,
                 sqlQuery,

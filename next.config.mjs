@@ -6,7 +6,7 @@ export default {
     // * Load options from environment variables
     /** @type {import('./cli').SecretOptions} */
     serverRuntimeConfig: {
-        database: process.env.DB_CONNECTION_STRING,
+        database: createDatabaseConnection(process.env.DB_CONNECTION_STRING),
         key: process.env.OPENAI_API_KEY,
         org: process.env.OPENAI_ORGANIZATION
     },

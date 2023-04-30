@@ -6,14 +6,13 @@ import readline from 'readline'
 
 import { GptSqlResponse, getSqlQuery } from '@/shared/chat-gpt'
 import { ERROR_PROMPT } from '@/shared/error'
-import { getIntrospection } from '@/shared/introspection'
 import { initOpenAI } from '@/shared/openai'
 
 import { CommonOptions } from './index'
 import InputHistoryPrompt from './input-history'
 import { editFile } from './utils'
 import { println } from './output'
-import { runSqlQuery } from './sql'
+import { CLIResult } from './result'
 type YesNo = 'yes' | 'no'
 
 inquirer.registerPrompt('input-history', InputHistoryPrompt)
@@ -63,17 +62,28 @@ export const startCLI = async (options: CommonOptions) => {
     }
 }
 
-const executeQueryAndShowResult = async ({
-    query,
-    history = [],
-    ...options
-}: CommonOptions & {
-    /** @example Number of users who have a first name starting with 'A' */
-    query: string
-    openai: OpenAIApi
-    history?: GptSqlResponse[]
-    stdin?: boolean
-}) => {
+const executeQueryAndShowResult = async (
+    options: CommonOptions & {
+        /** @example Number of users who have a first name starting with 'A' */
+        query: string
+        openai: OpenAIApi
+        history?: GptSqlResponse[]
+        stdin?: boolean
+    }
+) => {
+    const {
+        history = [],
+        database,
+        historyMode,
+        openai,
+        model,
+        format,
+        outputSql,
+        outputResult,
+        outputInfo,
+        confirm
+    } = options
+    let { autoCorrect, query } = options
     const tty = process.stdin.isTTY
     const spinner = ora({ isSilent: !tty })
     spinner.start()
@@ -81,27 +91,20 @@ const executeQueryAndShowResult = async ({
     try {
         if (!sqlQuery) {
             spinner.text = 'Getting SQL introspection...'
-            const introspection = await getIntrospection(options.database)
+            const introspection = await database.getIntrospection()
             spinner.text = 'Calling OpenAI... '
             const result = await getSqlQuery({
-                query,
-                history,
-                historyMode: options.historyMode,
-                openai: options.openai,
-                model: options.model,
+                ...options,
                 introspection
             })
             sqlQuery = result.sqlQuery
-            println(
-                `${result.usage?.total_tokens} tokens used`,
-                options.outputInfo
-            )
-            if (options.confirm && tty) {
+            println(`${result.usage?.total_tokens} tokens used`, outputInfo)
+            if (confirm && tty) {
                 // * Ask the user's confirmation before executing the SQL query
                 spinner.stop()
                 // * Confirm the SQL query, with the possibility to edit it
                 const confirmPrompt = async (): Promise<void> => {
-                    println(chalk.greenBright(sqlQuery), options.outputSql)
+                    println(chalk.greenBright(sqlQuery), outputSql)
                     const { confirm } = await inquirer.prompt<{
                         confirm: YesNo | 'edit'
                     }>([
@@ -139,39 +142,36 @@ const executeQueryAndShowResult = async ({
             }
         }
         spinner.text = 'Running query...'
-        const result = await runSqlQuery({
-            sqlQuery,
-            database: options.database
-        })
+        const result = new CLIResult(await database.runSqlQuery(sqlQuery))
         spinner.stop()
-        if (!options.confirm) {
+        if (!confirm) {
             // * Print the SQL query, but only if it's not already printed
-            println(chalk.dim(sqlQuery), options.outputSql)
+            println(chalk.dim(sqlQuery), outputSql)
         }
         spinner.succeed('Success')
-        if (options.historyMode === 'none') {
+        if (historyMode === 'none') {
             history.length = 0
         } else {
             history.push({ query, sqlQuery, result })
         }
-        println(result.toString(options.format), options.outputResult)
+        println(result.toString(format), outputResult)
     } catch (e) {
         const error = e as Error
         spinner.stop()
         if (sqlQuery) {
-            println(chalk.dim(sqlQuery), options.outputSql)
+            println(chalk.dim(sqlQuery), outputSql)
         }
         if (tty) {
             spinner.fail(error.message)
         } else {
-            println(error.message, options.outputInfo)
+            println(error.message, outputInfo)
         }
 
         type Retry = 'yes' | 'no' | 'editPrompt' | 'editSql'
         let retry: Retry = 'no'
-        if (options.autoCorrect > 0) {
+        if (autoCorrect > 0) {
             retry = 'yes'
-            options.autoCorrect--
+            autoCorrect--
         } else if (tty) {
             const choices = [
                 { key: 'y', name: 'Yes', value: 'yes' },
@@ -196,10 +196,7 @@ const executeQueryAndShowResult = async ({
             ])
             retry = prompt.retry
         }
-        if (
-            (retry !== 'no' && sqlQuery !== '') ||
-            options.historyMode !== 'none'
-        ) {
+        if ((retry !== 'no' && sqlQuery !== '') || historyMode !== 'none') {
             history.push({
                 query,
                 sqlQuery,
@@ -219,29 +216,27 @@ const executeQueryAndShowResult = async ({
                 })
                 try {
                     spinner.start()
-                    const result = await runSqlQuery({
-                        sqlQuery,
-                        database: options.database
-                    })
-                    spinner.stop()
-                    println(chalk.dim(sqlQuery), options.outputSql)
-                    spinner.succeed('Success')
-                    println(
-                        result.toString(options.format),
-                        options.outputResult
+                    const result = new CLIResult(
+                        await database.runSqlQuery(sqlQuery)
                     )
+                    spinner.stop()
+                    println(chalk.dim(sqlQuery), outputSql)
+                    spinner.succeed('Success')
+                    println(result.toString(format), outputResult)
                 } finally {
                     return
                 }
             }
             println(
                 `${chalk.blue('!')} Retrying with: ${chalk.bold(query)}`,
-                options.outputInfo
+                outputInfo
             )
             await executeQueryAndShowResult({
+                ...options,
+                autoCorrect,
                 query,
                 history,
-                ...options
+                database
             })
         }
     }

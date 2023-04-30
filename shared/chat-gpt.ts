@@ -4,9 +4,10 @@ import {
     OpenAIApi
 } from 'openai'
 
-import { Instrospection, getIntrospection } from './introspection'
 import { HistoryMode } from './options'
 import { Result } from './result'
+import { DatabaseConnection } from './connectors/utils'
+import { Instrospection } from './types'
 
 export type GptSqlResponse = {
     query: string
@@ -20,27 +21,20 @@ type MessageOptions = {
     query: string
     history?: GptSqlResponse[]
     historyMode: HistoryMode
-} & (
-    | {
-          database: string
-      }
-    | {
-          introspection: Instrospection
-      }
-)
+    database: DatabaseConnection
+    introspection?: Instrospection
+}
 
 const createMessages = async ({
     query,
     history,
     historyMode,
-    ...variant
+    introspection,
+    database
 }: MessageOptions): Promise<ChatCompletionRequestMessage[]> => {
     // * Get the SQL introspection
     const schema = JSON.stringify(
-        'introspection' in variant
-            ? variant.introspection
-            : await getIntrospection(variant.database),
-
+        introspection ? introspection : await database.getIntrospection(),
         null,
         0
     )
@@ -48,8 +42,7 @@ const createMessages = async ({
     const messages: ChatCompletionRequestMessage[] = [
         {
             role: 'system',
-            content:
-                'You are a postgresql developer that only responds in sql without formatting'
+            content: `You are a ${database.dialectName} developer that only responds in ${database.dialectName} without formatting`
         },
         {
             role: 'system',
