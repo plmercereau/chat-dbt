@@ -5,8 +5,9 @@ import { GptSqlResponse, getSqlQuery } from '@/shared/chat-gpt'
 import { initOpenAI } from '@/shared/openai'
 import { HistoryMode } from '@/shared/options'
 import { Result } from '@/shared/result'
+import { createDatabaseConnection } from '@/shared/connectors'
 
-const { key, org, database } = getSecrets()
+const { key, org, connectionString } = getSecrets()
 const { model } = getOptions()
 const openai = initOpenAI(key, org)
 
@@ -24,6 +25,7 @@ export default async function handler(
         return res.status(400).json({ error: 'no request', query: '' })
     }
 
+    const database = createDatabaseConnection(connectionString)
     try {
         const { sqlQuery, usage } = await getSqlQuery({
             openai,

@@ -84,10 +84,6 @@ const program = envProgram
 
 export type CommonOptions = ReturnType<typeof program.opts>
 
-type SecretOptionKeys = 'key' | 'org' | 'database'
-export type PublicOptions = Omit<CommonOptions, SecretOptionKeys | 'env'>
-export type SecretOptions = Pick<CommonOptions, SecretOptionKeys>
-
 program.configureHelp().showGlobalOptions = true
 
 const web = program

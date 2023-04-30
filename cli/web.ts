@@ -12,7 +12,11 @@ export const startWeb = async ({ port, browser, ...rest }: WebOptions) => {
         dev: false,
         conf: {
             distDir: 'web',
-            serverRuntimeConfig: { org, key, database },
+            serverRuntimeConfig: {
+                org,
+                key,
+                connectionString: database.connectionString
+            },
             publicRuntimeConfig: options
         },
         dir: dirname(fileURLToPath(import.meta.url))

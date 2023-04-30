@@ -1,6 +1,11 @@
 import getConfig from 'next/config'
-import { PublicOptions, SecretOptions } from '@/cli'
+import { CommonOptions } from '@/cli'
 
-export const getSecrets = (): SecretOptions => getConfig().serverRuntimeConfig
+export const getSecrets = (): Pick<CommonOptions, 'key' | 'org'> & {
+    connectionString: string
+} => getConfig().serverRuntimeConfig
 
-export const getOptions = (): PublicOptions => getConfig().publicRuntimeConfig
+export const getOptions = (): Omit<
+    CommonOptions,
+    'key' | 'org' | 'database' | 'env'
+> => getConfig().publicRuntimeConfig
