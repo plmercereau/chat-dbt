@@ -38,6 +38,7 @@
   },
   "bin": "./dist/index.mjs",
   "dependencies": {
+    "@clickhouse/client": "^0.0.15",
     "@commander-js/extra-typings": "^10.0.3",
     "@mantine/core": "^6.0.8",
     "@mantine/next": "^6.0.8",

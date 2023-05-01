@@ -42,7 +42,7 @@ const createMessages = async ({
     const messages: ChatCompletionRequestMessage[] = [
         {
             role: 'system',
-            content: `You are a ${database.dialectName} developer that only responds in ${database.dialectName} without formatting`
+            content: `You are a database developer that only responds in ${database.dialectName} without formatting`
         },
         {
             role: 'system',

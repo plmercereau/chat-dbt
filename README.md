@@ -4,11 +4,20 @@ Interact with your database using human queries through OpenAI GPT.
 
 https://user-images.githubusercontent.com/24897252/233864066-2110a65e-3337-40c2-a1e5-3756e21d6ed6.mp4
 
+## Features
+
+-   Supported databases: PostgreSQL, ClickHouse
+-   Both Command line and Web interfaces
+-   Pipe from/to standard input/output
+-   Keeps the history between queries (unless specified otherwise)
+-   Use OpenAI to auto-correct SQL errors
+-   Multiple result formats (table, JSON, CSV)
+
 ## Getting started
 
 ```sh
 npm i -g chat-dbt
-chat-dbt --database postgres://user:password@localhost:5432/postgres --key openai-key
+chat-dbt --database postgres://username:password@localhost:5432/postgres --key openai-key
 ```
 
 ## Usage
@@ -18,16 +27,27 @@ All the available options can be shown using `chat-dbt --help`
 ### Command-line interface
 
 ```sh
-chat-dbt --database postgres://user:password@localhost:5432/postgres --key openai-key
+chat-dbt --database postgres://username:password@localhost:5432/postgres --key openai-key
 ```
 
 ### Web interface
 
 ```sh
-chat-dbt web --database postgres://user:password@localhost:5432/postgres --key openai-key
+chat-dbt web --database postgres://username:password@localhost:5432/postgres --key openai-key
 ```
 
 https://user-images.githubusercontent.com/24897252/233865764-2a8c4716-f052-47f5-9e48-0ec3a4cc818f.mp4
+
+### Database connection string
+
+#### ClickHouse
+
+```sh
+chat-dbt --database clickhouse://username:password@server.clickhouse.cloud?secure=true
+```
+
+The `secure` option will translate into an `https` entrypoint. Its default is `false`, which corresponds to `http`.
+No other ClickHouse option is supported, please file an issue or create a pull request if you need some of them.
 
 ### Adapting context between queries
 
@@ -88,7 +108,7 @@ echo "list authors" | chat-dbt \
 ### Environment variables
 
 ```sh
-export DB_CONNECTION_STRING=postgres://user:password@localhost:5432/postgres
+export DB_CONNECTION_STRING=postgres://username:password@localhost:5432/postgres
 export OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 export OPENAI_ORGANIZATION=org-xxxxxxxxxxxxxxxxxxxxxxxx
 chat-dbt
@@ -97,7 +117,7 @@ chat-dbt
 Chat-DBT will also read the secrets mentioned above from a `.env` file, if it exists:
 
 ```
-DB_CONNECTION_STRING=postgres://user:password@localhost:5432/postgres
+DB_CONNECTION_STRING=postgres://username:password@localhost:5432/postgres
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 OPENAI_ORGANIZATION=org-xxxxxxxxxxxxxxxxxxxxxxxx
 ```

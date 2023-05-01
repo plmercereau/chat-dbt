@@ -4,21 +4,23 @@ import { Instrospection, RawSqlResult } from '../types'
 
 export class PostgresDatabaseConnection extends DatabaseConnection {
     constructor(connectionString: string) {
-        super(connectionString, 'Postgres SQL')
+        super({ connectionString, dialectName: 'Postgres SQL' })
     }
-    private _connection?: Sql
-    private get connection() {
-        if (!this._connection) {
-            this._connection = postgres(this.connectionString, {
+
+    private _client?: Sql
+    private async getClient() {
+        if (!this._client) {
+            this._client = postgres(this.connectionString, {
                 // ssl: 'require',
                 max: 1
             })
         }
-        return this._connection
+        return this._client
     }
 
     async getIntrospection() {
-        const result = await this.connection<
+        const sql = await this.getClient()
+        const result = await sql<
             {
                 table_name: string
                 column_name: string
@@ -70,6 +72,7 @@ export class PostgresDatabaseConnection extends DatabaseConnection {
     }
 
     async runSqlQuery(sqlQuery: string): Promise<RawSqlResult> {
-        return this.connection.unsafe(sqlQuery)
+        const sql = await this.getClient()
+        return sql.unsafe(sqlQuery)
     }
 }

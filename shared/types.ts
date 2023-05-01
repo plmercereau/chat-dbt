@@ -20,11 +20,15 @@ export type Row = Record<string, any>
 interface Column<T extends string> {
     name: T
     type: number
-    table: number
-    number: number
 }
 
 type RowList<T extends readonly any[]> = T & {
     columns: ColumnList<keyof T[number]>
     count: T['length']
 }
+
+type UndefinedKeys<T> = {
+    [K in keyof T]: undefined extends T[K] ? K : never
+}[keyof T]
+
+export type ExtractOptional<T> = Pick<T, Exclude<UndefinedKeys<T>, undefined>>

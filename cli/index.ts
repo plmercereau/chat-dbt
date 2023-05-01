@@ -14,7 +14,7 @@ const program = envProgram
     .addOption(
         createOption(
             '-d, --database <connection-string>',
-            'database connection string, for instance "postgres://user:password@localhost:5432/postgres"'
+            'database connection string, for instance "postgres://user:password@localhost:5432/postgres". Supported databases: postgres, clickhouse.'
         )
             .env('DB_CONNECTION_STRING')
             .argParser(value => createDatabaseConnection(value))

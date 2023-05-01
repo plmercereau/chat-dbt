@@ -10,6 +10,6 @@ export const createDatabaseConnection = (
         case 'postgres':
             return new PostgresDatabaseConnection(connectionString)
         case 'clickhouse':
-            throw new ClickHouseDatabaseConnection(connectionString)
+            return new ClickHouseDatabaseConnection(connectionString)
     }
 }

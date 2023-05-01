@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@changesets/cli': ^2.26.1
+  '@clickhouse/client': ^0.0.15
   '@commander-js/extra-typings': ^10.0.3
   '@emotion/react': ^11.10.6
   '@emotion/server': ^11.10.0
@@ -54,9 +55,12 @@ dependencies:
   open: 9.1.0
   openai: 3.2.1
   ora: 6.3.0
-  postgres: 3.3.4
   tmp: 0.2.1
   tty-table: 4.2.1
+
+optionalDependencies:
+  '@clickhouse/client': 0.0.15
+  postgres: 3.3.4
 
 devDependencies:
   '@changesets/cli': 2.26.1
@@ -311,6 +315,16 @@ packages:
       human-id: 1.0.2
       prettier: 2.8.7
     dev: true
+
+  /@clickhouse/client/0.0.15:
+    resolution: {integrity: sha512-BvUXRorcOrFqFKp6yc7QrPSAQwDcVokEXjRPJzPI70/i60lXnWSan4zCgXl/aOM1B15v/GRGp7Kv6pZ8u2tHIA==}
+    engines: {node: '>=14'}
+    requiresBuild: true
+    dependencies:
+      node-abort-controller: 3.1.1
+      uuid: 9.0.0
+    dev: false
+    optional: true
 
   /@commander-js/extra-typings/10.0.3_commander@10.0.1:
     resolution: {integrity: sha512-OIw28QV/GlP8k0B5CJTRsl8IyNvd0R8C8rfo54Yz9P388vCNDgdNrFlKxZTGqps+5j6lSw3Ss9JTQwcur1w1oA==}
@@ -3831,6 +3845,11 @@ packages:
     resolution: {integrity: sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==}
     dev: true
 
+  /node-abort-controller/3.1.1:
+    resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
+    dev: false
+    optional: true
+
   /nodemon/2.0.22:
     resolution: {integrity: sha512-B8YqaKMmyuCO7BowF1Z1/mkPqLk6cs/l63Ojtd6otKjMx47Dq1utxfRxcavH1I7VSaL8n5BUaoutadnsX3AAVQ==}
     engines: {node: '>=8.10.0'}
@@ -4268,7 +4287,9 @@ packages:
 
   /postgres/3.3.4:
     resolution: {integrity: sha512-XVu0+d/Y56pl2lSaf0c7V19AhAEfpVrhID1IENWN8nf0xch6hFq6dAov5dtUX6ZD46wfr1TxvLhxLtV8WnNsOg==}
+    requiresBuild: true
     dev: false
+    optional: true
 
   /preferred-pm/3.0.3:
     resolution: {integrity: sha512-+wZgbxNES/KlJs9q40F/1sfOd/j7f1O9JaHcW5Dsn3aUUOZg3L2bjpVUcKV2jvtElYfoTuQiNeMfQJ4kwUAhCQ==}
@@ -5316,6 +5337,12 @@ packages:
 
   /util-deprecate/1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
+  /uuid/9.0.0:
+    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
+    hasBin: true
+    dev: false
+    optional: true
 
   /validate-npm-package-license/3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==}

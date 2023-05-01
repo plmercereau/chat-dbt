@@ -1,5 +1,5 @@
 import { InvalidArgumentError } from '@commander-js/extra-typings'
-import { Instrospection, RawSqlResult } from '../types'
+import { Instrospection, ExtractOptional, RawSqlResult } from '../types'
 
 const DATABASE_CONNECTIONS = ['postgres', 'clickhouse'] as const
 
@@ -11,17 +11,30 @@ export type ParsedConnectionString = {
     password?: string
     hostname: string
     port?: string
-    database: string
+    database?: string
+    params?: Record<string, string>
 }
 
 export abstract class DatabaseConnection {
     public databaseConfig: ParsedConnectionString
-    constructor(public connectionString: string, public dialectName: string) {
-        this.databaseConfig = parseConnectionString(connectionString)
+    public connectionString: string
+    public dialectName: string
+    constructor({
+        connectionString,
+        dialectName,
+        ...defaults
+    }: ExtractOptional<ParsedConnectionString> & {
+        connectionString: string
+        dialectName: string
+    }) {
+        this.connectionString = connectionString
+        this.dialectName = dialectName
+        this.databaseConfig = parseConnectionString(connectionString, defaults)
         if (this.constructor === DatabaseConnection) {
             throw new Error('DatabaseConnection is abstract')
         }
     }
+
     getIntrospection(): Promise<Instrospection> {
         throw new Error('Method not implemented.')
     }
@@ -31,25 +44,31 @@ export abstract class DatabaseConnection {
 }
 
 export const parseConnectionString = (
-    value: string
+    value: string,
+    defaults: ExtractOptional<ParsedConnectionString> = {}
 ): ParsedConnectionString => {
     try {
-        const re =
-            /^(?:(?<protocol>[^:\/?#\s]+):\/{2})?(?:((?<username>[^@\/?#\s]+)(?::(?<password>[^@\/?#\s]+)))@)?((?<hostname>[^\/?#\s]+)(?::(?<port>[0-9]+)))?(?:\/(?<database>[^?#\s]*))?(?:[?]([^#\s]+))?\S*$/
-        const result = re.exec(value)?.groups as
-            | ParsedConnectionString
-            | undefined
+        const result = new URL(value)
         if (!result) {
             throw new InvalidArgumentError(
                 `Invalid database connection string.`
             )
         }
-        if (!DATABASE_CONNECTIONS.includes(result?.protocol)) {
+        const protocol = result.protocol.slice(0, -1) as DatabaseConnectionType
+        if (!DATABASE_CONNECTIONS.includes(protocol)) {
             throw new InvalidArgumentError(
                 `Invalid database connection type "${value}".`
             )
         }
-        return result
+        return {
+            hostname: result.hostname,
+            protocol,
+            port: result.port || defaults.port,
+            database: result.pathname || defaults.database,
+            password: result.password || defaults.password,
+            username: result.username || defaults.username,
+            params: Object.fromEntries(result.searchParams.entries())
+        }
     } catch {
         throw new InvalidArgumentError(`Invalid database connection string`)
     }
