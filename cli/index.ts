@@ -7,15 +7,20 @@ import { startCLI } from './cli'
 import { envProgram } from './env'
 import { parseInteger } from './utils'
 import { startWeb } from './web'
+import { parseConnectionString } from '@/shared/connectors'
 
 const program = envProgram
     .name('chat-dbt')
     .addOption(
         createOption(
             '-d, --database <connection-string>',
-            'database connection string, for instance "postgres://user:password@localhost:5432/postgres"'
+            'database connection string, for instance "postgres://user:password@localhost:5432/postgres". Supported databases: postgres, clickhouse.'
         )
             .env('DB_CONNECTION_STRING')
+            .argParser(value => {
+                parseConnectionString(value)
+                return value
+            })
             .makeOptionMandatory(true)
     )
     .addOption(
@@ -81,10 +86,6 @@ const program = envProgram
     )
 
 export type CommonOptions = ReturnType<typeof program.opts>
-
-type SecretOptionKeys = 'key' | 'org' | 'database'
-export type PublicOptions = Omit<CommonOptions, SecretOptionKeys | 'env'>
-export type SecretOptions = Pick<CommonOptions, SecretOptionKeys>
 
 program.configureHelp().showGlobalOptions = true
 

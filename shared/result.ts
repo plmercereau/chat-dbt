@@ -1,17 +1,17 @@
 import { stringify } from 'csv-stringify/sync'
-import { ColumnList, Row, RowList } from 'postgres'
 import { ResultFormat } from './options'
+import { ColumnList, RawSqlResult, Row } from './types'
 
 type JSON = string | number | boolean | null | JSONObject | JSONArray
 type JSONObject = { [key: string]: JSON }
 type JSONArray = JSON[]
 
 export class ResultItem {
-    public rows: RowList<Row[]>
-    public columns?: ColumnList<any>
+    public rows: RawSqlResult
+    public columns?: ColumnList
     public count: number | null
-    constructor(row: RowList<Row[]> | Row) {
-        this.rows = row as RowList<Row[]>
+    constructor(row: RawSqlResult | Row) {
+        this.rows = row as RawSqlResult
         this.columns = row.columns
         this.count = row.count
     }
@@ -33,10 +33,10 @@ export class ResultItem {
 
 export class Result<T extends ResultItem = ResultItem> {
     readonly data: Array<T>
-    private rawData: RowList<Row[]>
+    private rawData: RawSqlResult
 
     constructor(
-        rawResult: RowList<Row[]>,
+        rawResult: RawSqlResult,
         ItemClass: new (
             ...args: ConstructorParameters<typeof ResultItem>
         ) => T = ResultItem as any
@@ -46,7 +46,7 @@ export class Result<T extends ResultItem = ResultItem> {
         }
         if ('rows' in rawResult) {
             // * deserialize
-            this.rawData = rawResult.rows as RowList<Row[]>
+            this.rawData = rawResult.rows as RawSqlResult
             this.rawData.columns = rawResult.columns
             this.rawData.count = rawResult.count
         } else {

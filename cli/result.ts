@@ -1,8 +1,8 @@
-import { RowList, Row } from 'postgres'
 import table from 'tty-table'
 
 import { Result, ResultItem } from '@/shared/result'
 import { ResultFormat } from '@/shared/options'
+import { RawSqlResult } from '@/shared/types'
 
 class CLIResultItem extends ResultItem {
     toTable(): string {
@@ -21,7 +21,7 @@ class CLIResultItem extends ResultItem {
 }
 
 export class CLIResult extends Result<CLIResultItem> {
-    constructor(result: RowList<Row[]>) {
+    constructor(result: RawSqlResult) {
         super(result, CLIResultItem)
     }
     toTable(): string {
