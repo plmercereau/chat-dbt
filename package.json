@@ -1,6 +1,6 @@
 {
   "name": "chat-dbt",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Interact with your database using human queries through OpenAI GPT",
   "license": "MIT",
   "keywords": [
