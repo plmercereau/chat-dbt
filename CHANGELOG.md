@@ -1,5 +1,11 @@
 # chat-dbt
 
+## 0.5.0
+
+### Minor Changes
+
+- d97d217: support for ClickHouse
+
 ## 0.4.0
 
 ### Minor Changes
