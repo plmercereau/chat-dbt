@@ -13,3 +13,5 @@ export const createDatabaseConnection = (
             return new ClickHouseDatabaseConnection(connectionString)
     }
 }
+
+export { parseConnectionString }

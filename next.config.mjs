@@ -5,7 +5,7 @@ export default {
     distDir: 'dist/web',
     // * Load options from environment variables
     serverRuntimeConfig: {
-        connectionString: process.env.DB_CONNECTION_STRING,
+        database: process.env.DB_CONNECTION_STRING,
         key: process.env.OPENAI_API_KEY,
         org: process.env.OPENAI_ORGANIZATION
     },

@@ -7,7 +7,7 @@ import { HistoryMode } from '@/shared/options'
 import { Result } from '@/shared/result'
 import { createDatabaseConnection } from '@/shared/connectors'
 
-const { key, org, connectionString } = getSecrets()
+const { key, org, database } = getSecrets()
 const { model } = getOptions()
 const openai = initOpenAI(key, org)
 
@@ -25,19 +25,19 @@ export default async function handler(
         return res.status(400).json({ error: 'no request', query: '' })
     }
 
-    const database = createDatabaseConnection(connectionString)
+    const dbConnection = createDatabaseConnection(database)
     try {
         const { sqlQuery, usage } = await getSqlQuery({
             openai,
             model,
             query,
-            database,
+            dbConnection,
             history,
             historyMode
         })
 
         try {
-            const result = new Result(await database.runSqlQuery(sqlQuery))
+            const result = new Result(await dbConnection.runSqlQuery(sqlQuery))
             return res.status(200).json({
                 query,
                 sqlQuery,

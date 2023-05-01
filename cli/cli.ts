@@ -13,6 +13,8 @@ import InputHistoryPrompt from './input-history'
 import { editFile } from './utils'
 import { println } from './output'
 import { CLIResult } from './result'
+import { createDatabaseConnection } from '@/shared/connectors'
+import { DatabaseConnection } from '@/shared/connectors/utils'
 type YesNo = 'yes' | 'no'
 
 inquirer.registerPrompt('input-history', InputHistoryPrompt)
@@ -20,7 +22,7 @@ inquirer.registerPrompt('input-history', InputHistoryPrompt)
 export const startCLI = async (options: CommonOptions) => {
     const openai = initOpenAI(options.key, options.org)
     const history: GptSqlResponse[] = []
-
+    const dbConnection = await createDatabaseConnection(options.database)
     if (process.stdin.isTTY) {
         // * Interactive mode
         // * The history of queries is not calculated from the full his
@@ -39,6 +41,7 @@ export const startCLI = async (options: CommonOptions) => {
             ])
             promptHistory.push(query)
             await executeQueryAndShowResult({
+                dbConnection,
                 openai,
                 query,
                 history,
@@ -53,6 +56,7 @@ export const startCLI = async (options: CommonOptions) => {
         })
         for await (const query of rl) {
             await executeQueryAndShowResult({
+                dbConnection,
                 openai,
                 query,
                 history,
@@ -69,14 +73,14 @@ const executeQueryAndShowResult = async (
         openai: OpenAIApi
         history?: GptSqlResponse[]
         stdin?: boolean
+        dbConnection: DatabaseConnection
     }
 ) => {
     const {
+        dbConnection,
         history = [],
         database,
         historyMode,
-        openai,
-        model,
         format,
         outputSql,
         outputResult,
@@ -91,10 +95,11 @@ const executeQueryAndShowResult = async (
     try {
         if (!sqlQuery) {
             spinner.text = 'Getting SQL introspection...'
-            const introspection = await database.getIntrospection()
+            const introspection = await dbConnection.getIntrospection()
             spinner.text = 'Calling OpenAI... '
             const result = await getSqlQuery({
                 ...options,
+                dbConnection,
                 introspection
             })
             sqlQuery = result.sqlQuery
@@ -142,7 +147,7 @@ const executeQueryAndShowResult = async (
             }
         }
         spinner.text = 'Running query...'
-        const result = new CLIResult(await database.runSqlQuery(sqlQuery))
+        const result = new CLIResult(await dbConnection.runSqlQuery(sqlQuery))
         spinner.stop()
         if (!confirm) {
             // * Print the SQL query, but only if it's not already printed
@@ -217,7 +222,7 @@ const executeQueryAndShowResult = async (
                 try {
                     spinner.start()
                     const result = new CLIResult(
-                        await database.runSqlQuery(sqlQuery)
+                        await dbConnection.runSqlQuery(sqlQuery)
                     )
                     spinner.stop()
                     println(chalk.dim(sqlQuery), outputSql)

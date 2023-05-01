@@ -21,7 +21,7 @@ type MessageOptions = {
     query: string
     history?: GptSqlResponse[]
     historyMode: HistoryMode
-    database: DatabaseConnection
+    dbConnection: DatabaseConnection
     introspection?: Instrospection
 }
 
@@ -30,11 +30,11 @@ const createMessages = async ({
     history,
     historyMode,
     introspection,
-    database
+    dbConnection
 }: MessageOptions): Promise<ChatCompletionRequestMessage[]> => {
     // * Get the SQL introspection
     const schema = JSON.stringify(
-        introspection ? introspection : await database.getIntrospection(),
+        introspection ? introspection : await dbConnection.getIntrospection(),
         null,
         0
     )
@@ -42,7 +42,7 @@ const createMessages = async ({
     const messages: ChatCompletionRequestMessage[] = [
         {
             role: 'system',
-            content: `You are a database developer that only responds in ${database.dialectName} without formatting`
+            content: `You are a database developer that only responds in ${dbConnection.dialectName} without formatting`
         },
         {
             role: 'system',

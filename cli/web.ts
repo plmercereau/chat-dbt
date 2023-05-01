@@ -15,7 +15,7 @@ export const startWeb = async ({ port, browser, ...rest }: WebOptions) => {
             serverRuntimeConfig: {
                 org,
                 key,
-                connectionString: database.connectionString
+                database
             },
             publicRuntimeConfig: options
         },
