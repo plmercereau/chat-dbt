@@ -8,6 +8,7 @@
     "OpenAI",
     "postgres",
     "postgresql",
+    "clickhouse",
     "SQL",
     "database",
     "db",
